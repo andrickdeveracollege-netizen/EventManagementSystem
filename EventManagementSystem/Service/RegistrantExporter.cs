@@ -1,4 +1,4 @@
-﻿using EventManagement.Model.DTO;
+﻿
 using EventManagementSystem.Model.DTO;
 using EventManagementSystem.Service;
 

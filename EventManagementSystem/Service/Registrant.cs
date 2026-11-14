@@ -1,4 +1,4 @@
-﻿using EventManagement.Model.Domain;
+﻿
 using EventManagementSystem.Model.Domain;
 
 namespace EventManagement.Service;
