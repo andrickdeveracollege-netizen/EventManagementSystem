@@ -1,9 +1,8 @@
 ﻿using EventManagementSystem.Model.DTO;
 
-namespace EventManagementSystem.Service
+namespace EventManagement.Service;
+
+public interface IEquipmentService
 {
-    public interface IEquipmentService
-    {
-        Task<List<EquipmentDto>> GetCatalogAsync();
-    }
+    Task<List<EquipmentDto>> GetCatalogAsync();
 }
