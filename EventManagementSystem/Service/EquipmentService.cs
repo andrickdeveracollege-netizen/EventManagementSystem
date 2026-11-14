@@ -1,4 +1,6 @@
 ﻿
+using EventManagementSystem.Model.DTO;
+using EventManagementSystem.Service;
 
 namespace EventManagement.Service;
 
@@ -10,4 +12,3 @@ public class EquipmentService : IEquipmentService
     public async Task<List<EquipmentDto>> GetCatalogAsync() =>
         (await _equipment.GetAllAsync()).Select(e => e.ToDto()).ToList();
 }
-
