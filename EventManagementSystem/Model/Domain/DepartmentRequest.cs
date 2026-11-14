@@ -1,0 +1,23 @@
+﻿namespace EventManagement.Model.Domain;
+public class DepartmentRequest
+{
+    public int Id { get; set; }
+
+    public int CampusEventId { get; set; }
+    public CampusEvent? CampusEvent { get; set; }
+
+    public DepartmentType Department { get; set; }
+    public EventStatus Status { get; set; } = EventStatus.Pending;
+
+    public string? EndorsementStoredName { get; set; }
+    public string? EndorsementOriginalName { get; set; }
+
+    public string? ReviewedBy { get; set; }
+    public DateTime? ReviewedAt { get; set; }
+    public string? RejectionReason { get; set; }
+    public string? AdminNote { get; set; }      
+    public DateTime? NoteUpdatedAt { get; set; }
+
+    public ICollection<EventFacility> Facilities { get; set; } = new List<EventFacility>();
+    public ICollection<EventEquipment> EquipmentItems { get; set; } = new List<EventEquipment>();
+}
