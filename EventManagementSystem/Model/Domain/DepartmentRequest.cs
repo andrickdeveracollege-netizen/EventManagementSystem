@@ -1,4 +1,4 @@
-﻿namespace EventManagement.Model.Domain;
+﻿namespace EventManagementSystem.Model.Domain;
 public class DepartmentRequest
 {
     public int Id { get; set; }
