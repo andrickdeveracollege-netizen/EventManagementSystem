@@ -1,7 +1,4 @@
-﻿using EventManagement.Mapper;
-using EventManagement.Model.Domain;
-using EventManagement.Model.DTO;
-using EventManagement.Repository;
+﻿
 using EventManagementSystem.Model.Domain;
 using EventManagementSystem.Service;
 
