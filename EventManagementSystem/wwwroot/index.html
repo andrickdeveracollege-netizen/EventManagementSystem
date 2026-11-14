@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>UST Angelicum College – Events</title>
+    <link rel="icon" type="image/png" href="/images/angelicum-logo.png" />
+    <link rel="stylesheet" href="/css/site.css?v=20261113" />
+    <link rel="stylesheet" href="/css/board.css?v=20261113" />
+    <style>
+        /* Home layout lives here too, so it still works if the browser holds an old board.css */
+        .home {
+            display: grid;
+            grid-template-columns: minmax(0, 75fr) minmax(260px, 25fr);
+            grid-template-areas: "board side" "cal cal";
+            gap: 18px;
+            max-width: 1600px;
+            margin: 22px auto;
+            padding: 0 16px;
+            align-items: start;
+        }
+
+            .home .col-board {
+                grid-area: board;
+                min-width: 0;
+            }
+
+            .home .side {
+                grid-area: side;
+                position: sticky;
+                top: 16px;
+            }
+
+            .home .col-cal {
+                grid-area: cal;
+                min-width: 0;
+            }
+
+        @media (max-width: 1000px) {
+            .home {
+                grid-template-columns: 1fr;
+                grid-template-areas: "side" "board" "cal";
+            }
+
+                .home .side {
+                    position: static;
+                }
+        }
+    </style>
+</head>
+<body>
+    <header class="top">
+        <a class="brand" href="/index.html"><img class="brand-logo" src="/images/angelicum-logo.png" alt="UST Angelicum College logo" />UST Angelicum College · Event Management System</a>
+        <nav id="nav"></nav>
+    </header>
+
+    <main class="home">
+        <!-- TOP LEFT: bulletin board (cork board image) -->
+        <section class="col-board">
+            <div class="board-head">
+                <h1>Bulletin Board</h1>
+                <span class="muted">Approved upcoming events</span>
+            </div>
+            <div class="cork"><div class="cork-inner" id="board"></div></div>
+            <div class="board-pager">
+                <button class="btn ghost" id="boardPrev" type="button">‹</button>
+                <span class="muted" id="boardPage"></span>
+                <button class="btn ghost" id="boardNext" type="button">›</button>
+            </div>
+        </section>
+
+        <!-- RIGHT (25%): sign-in box -->
+        <aside class="side">
+            <div class="card" id="signedOut">
+                <h2>Sign in</h2>
+                <div class="muted">Use your Angelicum account to register for or request an event.</div>
+                <div class="tabs" style="margin-top:12px">
+                    <button class="btn" id="tabIn" type="button">Sign in</button>
+                    <button class="btn ghost" id="tabUp" type="button">Create account</button>
+                </div>
+                <form id="authForm" novalidate>
+                    <div id="nameRow" style="display:none"><label for="fullName">Full name</label><input type="text" id="fullName" /></div>
+                    <label for="email">Angelicum email</label><input type="email" id="email" placeholder="name@ustangelicum.edu.ph" />
+                    <label for="password">Password</label><input type="password" id="password" />
+                    <div class="hint" id="roleHint">Students: firstname.surname.college / .shs / .jhs / .elem<br>Faculty &amp; staff: firstname.surname</div>
+                    <div class="msg" id="authMsg"></div>
+                    <button class="btn" type="submit" id="authSubmit" style="width:100%;margin-top:12px">Sign in</button>
+                </form>
+                <hr style="border:0;border-top:1px solid var(--line);margin:16px 0" />
+                <div class="muted">Not from the school?</div>
+                <a class="btn gold" href="/visitor.html" style="display:block;text-align:center;margin-top:8px">Continue as visitor</a>
+            </div>
+
+            <div class="card" id="signedIn" style="display:none">
+                <h2>Welcome!</h2>
+                <p class="who muted" id="who"></p>
+                <div class="stack">
+                    <a class="btn gold" href="/dashboard.html">Go to dashboard</a>
+                    <a class="btn" id="registerLink" href="/register.html">Register for an Event</a>
+                    <a class="btn" id="requestLink" href="/request.html">Request an Event</a>
+                    <a class="btn ghost" id="adminLink" href="/admin.html" style="display:none">Approvals</a>
+                    <a class="btn ghost" id="superLink" href="/superadmin.html" style="display:none">Super admin</a>
+                    <button class="btn bad" id="logoutBtn" type="button">Sign out</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- BOTTOM: facility calendar (full width, so nothing is cramped) -->
+        <section class="col-cal">
+            <div class="card">
+                <div class="cal-head">
+                    <h2 id="monthTitle"></h2>
+                    <select id="facFilter"><option value="">All facilities</option></select>
+                    <button class="btn ghost" id="prev" type="button">‹</button>
+                    <button class="btn ghost" id="today" type="button">Today</button>
+                    <button class="btn ghost" id="next" type="button">›</button>
+                </div>
+                <div class="muted" style="margin:8px 0"><span class="tag approved">Approved events</span></div>
+                <div id="cal" class="cal"></div>
+                <div id="dayList" style="margin-top:12px"></div>
+            </div>
+        </section>
+    </main>
+
+    <script src="/js/api.js?v=20261118"></script>
+    <script src="/js/calendar.js?v=20261118"></script>
+    <script src="/js/index.js?v=20261118"></script>
+</body>
+</html>
