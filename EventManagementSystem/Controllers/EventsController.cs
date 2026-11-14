@@ -1,11 +1,82 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EventManagement.Service;
+using EventManagementSystem.Model.DTO;
+using EventManagementSystem.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagementSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/events")]
     public class EventsController : ControllerBase
     {
+        private readonly IEventService _events;
+        public EventsController(IEventService events) => _events = events;
+
+        // Public: bulletin board on the landing page (approved, upcoming)
+        [HttpGet("bulletin")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Bulletin() => Ok(await _events.GetBulletinAsync());
+
+        // Public: shared facility calendar (approved + pending, so slots stay held while under review)
+        [HttpGet("calendar")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Calendar([FromQuery] DateTime from, [FromQuery] DateTime to, [FromQuery] int? facilityId)
+            => Ok(await _events.GetCalendarAsync(from, to, facilityId));
+
+        [HttpGet("mine")]
+        [Authorize]
+        public async Task<IActionResult> Mine() => Ok(await _events.GetMineAsync(User.Email()));
+
+        // Who registered. Requester and the offices only.
+        [HttpGet("{id:int}/registrations")]
+        [Authorize]
+        public async Task<IActionResult> Registrants(int id) =>
+            Ok(await _events.GetRegistrantsAsync(id, User.Email(), User.IsAnyAdmin(), User.Dept()));
+
+        [HttpGet("{id:int}/registrations/export")]
+        [Authorize]
+        public async Task<IActionResult> ExportRegistrants(int id)
+        {
+            var list = await _events.GetRegistrantsAsync(id, User.Email(), User.IsAnyAdmin(), User.Dept());
+            var (bytes, name) = RegistrantExporter.ToExcel(list);
+            return File(bytes, RegistrantExporter.ContentType, name);
+        }
+
+        [HttpGet("{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> Detail(int id) => Ok(await _events.GetDetailAsync(id));
+
+        // The requester's role comes from the account (email format), it is not typed in the form
+        [HttpPost("request")]
+        [Authorize]
+        [Consumes("multipart/form-data")]
+        [RequestSizeLimit(40_000_000)]
+        public async Task<IActionResult> SubmitRequest([FromForm] EventRequestDto dto)
+        {
+            User.EnsureNotAdmin("request events. The super admin posts institutional events instead");
+            var who = new Requester(User.Email(), User.Position(), IsGuest: false);
+            var created = await _events.CreateRequestAsync(dto, who);
+            return CreatedAtAction(nameof(Detail), new { id = created.Event.Id }, created);
+        }
+
+        [HttpPut("{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> Update(int id, EventUpdateDto dto)
+            => Ok(await _events.UpdateAsync(id, dto, User.Email()));
+
+        [HttpPut("{id:int}/reschedule")]
+        [Authorize]
+        public async Task<IActionResult> Reschedule(int id, RescheduleDto dto)
+            => Ok(await _events.RescheduleAsync(id, dto, User.Email()));
+
+        [HttpDelete("{id:int}")]
+        [Authorize]
+        public async Task<IActionResult> Cancel(int id)
+        {
+            await _events.CancelAsync(id, User.Email());
+            return NoContent();
+        }
     }
 }

@@ -1,0 +1,30 @@
+﻿using EventManagement.Service;
+using EventManagementSystem.Model.DTO;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
+namespace EventManagementSystem.Controllers
+{
+    [ApiController]
+    [Route("api/auth")]
+    public class AuthController : ControllerBase
+    {
+        private readonly IAuthService _auth;
+        public AuthController(IAuthService auth) => _auth = auth;
+
+        [HttpPost("register")]
+        public async Task<ActionResult<AuthResponseDto>> Register(RegisterAccountDto dto) => Ok(await _auth.RegisterAsync(dto));
+
+        [HttpPost("login")]
+        public async Task<ActionResult<AuthResponseDto>> Login(LoginDto dto) => Ok(await _auth.LoginAsync(dto));
+
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDto dto)
+        {
+            await _auth.ChangePasswordAsync(User.Email(), dto);
+            return Ok(new { message = "Password changed." });
+        }
+    }
+}
