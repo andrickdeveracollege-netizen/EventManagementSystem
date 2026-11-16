@@ -1,8 +1,8 @@
-﻿using EventManagementSystem.Model.Domain;
+﻿using EventManagementSystem.Repository;
+using EventManagementSystem.Model.Domain;
 
 namespace EventManagementSystem.Repository
 {
-    namespace EventManagement.Repository;
 
     public interface IEventRepository
     {

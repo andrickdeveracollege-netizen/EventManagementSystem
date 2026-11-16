@@ -1,6 +1,7 @@
 ﻿using EventManagementSystem.Model.DATA;
 using EventManagementSystem.Model.Domain;
 using Microsoft.EntityFrameworkCore;
+using EventManagementSystem.Repository;
 
 namespace EventManagement.Repository;
 

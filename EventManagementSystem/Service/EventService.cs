@@ -1,8 +1,10 @@
 ﻿
+using EventManagementSystem.Mapper;
 using EventManagementSystem.Model.Domain;
-using EventManagementSystem.Service;
+using EventManagementSystem.Model.DTO;
+using EventManagementSystem.Repository;
 
-namespace EventManagement.Service;
+namespace EventManagementSystem.Service;
 
 public class EventService : IEventService
 {

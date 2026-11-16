@@ -2,7 +2,6 @@
 
 namespace EventManagementSystem.Repository
 {
-    namespace EventManagement.Repository;
 
     public interface IEquipmentRepository
     {

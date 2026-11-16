@@ -1,4 +1,5 @@
 ﻿using EventManagementSystem.Model.Domain;
+using EventManagementSystem.Model.DTO;
 
 namespace EventManagementSystem.Mapper
 {

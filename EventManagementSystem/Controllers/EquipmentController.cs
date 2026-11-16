@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using EventManagementSystem.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 

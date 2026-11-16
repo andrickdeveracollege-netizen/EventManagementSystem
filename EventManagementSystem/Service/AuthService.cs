@@ -2,11 +2,11 @@
 using EventManagementSystem.Model.Domain;
 using EventManagementSystem.Model.DTO;
 using EventManagementSystem.Repository;
-using EventManagementSystem.Service;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using EventManagementSystem.Service;
 
 namespace EventManagementSystem.Service;
 

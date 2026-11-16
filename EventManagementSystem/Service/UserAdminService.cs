@@ -2,8 +2,10 @@
 using EventManagementSystem.Model.Domain;
 using EventManagementSystem.Model.DTO;
 using EventManagementSystem.Service;
+using EventManagementSystem.Repository;
 
-namespace EventManagement.Service;
+
+namespace EventManagementSystem.Service;
 
 // Used only by the super admin (admin@ustangelicum.edu.ph)
 public class UserAdminService : IUserAdminService

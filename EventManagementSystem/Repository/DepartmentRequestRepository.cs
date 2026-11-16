@@ -1,4 +1,5 @@
 ﻿using EventManagementSystem.Model.DATA;
+using EventManagementSystem.Repository;
 using EventManagementSystem.Model.Domain;
 using Microsoft.EntityFrameworkCore;
 

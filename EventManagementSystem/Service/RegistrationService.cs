@@ -1,9 +1,10 @@
 ﻿
 using EventManagementSystem.Model.Domain;
 using EventManagementSystem.Model.DTO;
+using EventManagementSystem.Repository;
 using EventManagementSystem.Service;
 
-namespace EventManagement.Service;
+namespace EventManagementSystem.Service;
 
 public class RegistrationService : IRegistrationService
 {

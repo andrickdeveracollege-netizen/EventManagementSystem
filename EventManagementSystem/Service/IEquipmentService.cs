@@ -1,6 +1,6 @@
 ﻿using EventManagementSystem.Model.DTO;
 
-namespace EventManagement.Service;
+namespace EventManagementSystem.Service;
 
 public interface IEquipmentService
 {
