@@ -21,7 +21,6 @@ public class EventRepository : IEventRepository
 
     public Task<List<CampusEvent>> GetCalendarAsync(DateTime from, DateTime to, int? facilityId)
     {
-        // Same rule as the bulletin board: only APPROVED events are shown
         var q = Full().Where(e => e.Status == EventStatus.Approved
                                   && e.StartTime < to && e.EndTime > from);
         if (facilityId.HasValue)

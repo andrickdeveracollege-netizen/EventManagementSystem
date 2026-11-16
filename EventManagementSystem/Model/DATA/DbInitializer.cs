@@ -14,7 +14,6 @@ namespace EventManagementSystem.Model.DATA
             await SeedSampleEventAsync(db);
         }
 
-        // admin@ustangelicum.edu.ph: resets passwords, posts institutional events, approves any office
         private static async Task SeedSuperAdminAsync(AppDBContext db, IConfiguration config)
         {
             var email = config["Seed:SuperAdmin:Email"]?.Trim().ToLowerInvariant();
@@ -58,7 +57,6 @@ namespace EventManagementSystem.Model.DATA
             await db.SaveChangesAsync();
         }
 
-        // One account per kind of school user. Role and level come from the email format.
         private static async Task SeedTestUsersAsync(AppDBContext db, IConfiguration config)
         {
             foreach (var section in config.GetSection("Seed:Users").GetChildren())
@@ -84,7 +82,6 @@ namespace EventManagementSystem.Model.DATA
             await db.SaveChangesAsync();
         }
 
-        // One approved upcoming event so the bulletin board and registration have something to show
         private static async Task SeedSampleEventAsync(AppDBContext db)
         {
             if (await db.Events.AnyAsync()) return;

@@ -1,5 +1,4 @@
-﻿// Works for school accounts (signed in) and for guests (?guest=1, email required).
-const guest = new URLSearchParams(location.search).has('guest') && !Auth.token;
+﻿const guest = new URLSearchParams(location.search).has('guest') && !Auth.token;
 if (!guest && !Auth.require()) throw new Error('Not signed in');
 if (!guest && Auth.user.isAdmin) { location.href = '/admin.html'; throw new Error('Admins cannot register'); }
 renderNav(document.getElementById('nav'));
@@ -35,7 +34,7 @@ eventSelect.onchange = showAudience;
 
 (async () => {
     const all = await api('/api/events/bulletin');
-    events = all.filter(e => e.requiresRegistration);      // institutional events need no registration
+    events = all.filter(e => e.requiresRegistration);
     eventSelect.innerHTML = events.length
         ? events.map(e => `<option value="${e.id}">${esc(e.title)} — ${fmt(e.startTime)} @ ${esc(placesOf(e))}</option>`).join('')
         : '<option value="">No open events</option>';

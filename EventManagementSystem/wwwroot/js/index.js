@@ -1,6 +1,5 @@
 ﻿renderNav(document.getElementById('nav'));
 
-// Signed-in users get the calendar on their dashboard, so the home page shows it to visitors only
 const signedInUser = !!(Auth.token && Auth.user);
 const calSection = document.querySelector('.col-cal');
 if (signedInUser) {
@@ -17,7 +16,6 @@ if (signedInUser) {
     });
 }
 
-// ---------- Sign-in box: signed in vs signed out ----------
 const authForm = document.getElementById('authForm');
 const authMsg = document.getElementById('authMsg');
 const emailInput = document.getElementById('email');
@@ -30,7 +28,6 @@ if (signedInUser) {
     document.getElementById('signedIn').style.display = 'block';
     document.getElementById('who').textContent = Auth.user.fullName + ' · ' + Auth.user.email;
     if (Auth.user.isAdmin) {
-        // admins only manage events: they do not register or request
         document.getElementById('adminLink').style.display = 'block';
         document.getElementById('registerLink').style.display = 'none';
         document.getElementById('requestLink').style.display = 'none';
@@ -55,7 +52,6 @@ function setMode(m) {
 document.getElementById('tabIn').onclick = () => setMode('in');
 document.getElementById('tabUp').onclick = () => setMode('up');
 
-// Shows what the email means, so nobody has to pick a role
 const LEVELS = { college: 'College student', shs: 'Senior High student', jhs: 'Junior High student', elem: 'Elementary student' };
 emailInput.addEventListener('input', () => {
     if (mode !== 'up') return;
@@ -90,7 +86,6 @@ authForm.addEventListener('submit', async e => {
     }
 });
 
-// ---------- Cork board (4 notes per page) ----------
 const PER_PAGE = 4;
 const colors = ['yellow', 'pink', 'blue', 'green', 'orange', 'purple'];
 const board = document.getElementById('board');

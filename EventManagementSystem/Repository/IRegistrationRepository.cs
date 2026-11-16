@@ -4,11 +4,11 @@ namespace EventManagementSystem.Repository
 {
     public interface IRegistrationRepository
     {
-        Task<bool> ExistsAsync(int eventId, string email);                 // active (not cancelled) only
-        Task<EventRegistration?> GetAsync(int eventId, string email);       // tracked, includes cancelled
-        Task<EventRegistration?> GetByIdAsync(int id);                      // tracked
+        Task<bool> ExistsAsync(int eventId, string email);
+        Task<EventRegistration?> GetAsync(int eventId, string email);
+        Task<EventRegistration?> GetByIdAsync(int id);
         Task<int> CountActiveAsync(int eventId);
-        Task<List<EventRegistration>> GetByEmailAsync(string email);        // with CampusEvent
+        Task<List<EventRegistration>> GetByEmailAsync(string email);
         Task AddAsync(EventRegistration registration);
         Task SaveAsync();
     }

@@ -1,6 +1,5 @@
 ﻿if (!Auth.require(true)) throw new Error('Admins only');
 renderNav(document.getElementById('nav'));
-// Super admin picks an office; office admins are fixed to their own.
 const dept = new URLSearchParams(location.search).get('dept') || 'Auxiliary';
 const officeSel = document.getElementById('officeSel');
 const scopeQ = Auth.user.isSuperAdmin ? 'dept=' + encodeURIComponent(officeSel.value = dept) : '';
@@ -52,7 +51,6 @@ async function loadRequests() {
         : `<div class="empty-state">No ${tab.toLowerCase()} requests.</div>`;
 }
 
-// Report: seats taken vs capacity per event (ticket report)
 async function loadReport() {
     const rows = await api(q('/api/admin/reports/events'));
     const total = rows.reduce((s, r) => s + r.registered, 0);
@@ -120,7 +118,7 @@ list.addEventListener('click', async e => {
             toast('Request approved.');
             load();
         } catch (err) {
-            toast(err.message, false);   // e.g. 409 "Another approved event already uses: Gym"
+            toast(err.message, false);
         }
     }
 });

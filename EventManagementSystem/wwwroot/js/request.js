@@ -1,5 +1,4 @@
-﻿// Same form for school accounts (signed in) and guests (?guest=1, outsiders, weekends only).
-const guest = new URLSearchParams(location.search).has('guest') && !Auth.token;
+﻿const guest = new URLSearchParams(location.search).has('guest') && !Auth.token;
 if (!guest && !Auth.require()) throw new Error('Not signed in');
 if (!guest && Auth.user.isAdmin) { location.href = '/admin.html'; throw new Error('Admins cannot request events'); }
 renderNav(document.getElementById('nav'));
@@ -20,7 +19,6 @@ const OFFICES = [
     { key: 'Library', label: 'Library', letterOptional: true }
 ];
 
-// ---------- who is asking (role is never typed) ----------
 const whoBox = document.getElementById('who');
 if (guest) {
     whoBox.textContent = 'Visitor request. Please give your email. Outsiders can only book on weekends (Saturday and Sunday).';
@@ -34,7 +32,6 @@ if (guest) {
     document.getElementById('requesterName').value = u.fullName;
 }
 
-// ---------- build the office blocks ----------
 (async () => {
     const [facilities, equipment] = await Promise.all([api('/api/facilities'), api('/api/equipment')]);
     deptBox.innerHTML = OFFICES.map(o => blockHtml(o,
@@ -93,7 +90,6 @@ function syncOtherName(block) {
     if (box) box.style.display = otherTicked ? 'block' : 'none';
 }
 
-// Big event => only big facilities are shown. Small rooms disappear (and get unticked).
 function filterFacilities() {
     const people = Number(capacityInput.value) || 0;
     document.querySelectorAll('.dept-block').forEach(block => {
@@ -112,7 +108,6 @@ function filterFacilities() {
 }
 capacityInput.addEventListener('input', filterFacilities);
 
-// ---------- validation (the server checks everything again) ----------
 function isWeekendRange(start, end) {
     const d = new Date(start.getFullYear(), start.getMonth(), start.getDate());
     const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());

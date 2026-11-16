@@ -3,9 +3,8 @@
 const manageForm = document.getElementById('manageForm');
 const mMsg = document.getElementById('mMsg');
 const manageBox = document.getElementById('manageBox');
-let current = null;   // { id, email, code }
+let current = null;
 
-// ---------- upcoming events (open to outsiders flagged) ----------
 api('/api/events/bulletin').then(list => {
     document.getElementById('events').innerHTML = list.length
         ? list.map(e => `<div class="req"><strong>${esc(e.title)}</strong>
@@ -15,7 +14,6 @@ api('/api/events/bulletin').then(list => {
         : '<div class="empty-state">No upcoming events.</div>';
 }).catch(err => { document.getElementById('events').innerHTML = `<div class="empty-state">${esc(err.message)}</div>`; });
 
-// ---------- manage a guest request ----------
 function query() { return `email=${encodeURIComponent(current.email)}&code=${encodeURIComponent(current.code)}`; }
 
 function renderManage(d) {

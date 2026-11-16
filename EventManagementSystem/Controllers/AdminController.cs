@@ -15,11 +15,9 @@ namespace EventManagementSystem.Controllers
         private readonly IEventService _events;
         public AdminController(IEventService events) => _events = events;
 
-        // null = super admin (no office restriction)
         private DepartmentType? Scope => User.IsInRole("SuperAdmin") ? null : User.Dept()
             ?? throw new ServiceException("Your admin account has no office assigned.", 403);
 
-        // For lists: which office's requests to show
         private DepartmentType Office(DepartmentType? dept) =>
             Scope ?? dept ?? throw new ServiceException("Choose an office.");
 
@@ -55,7 +53,6 @@ namespace EventManagementSystem.Controllers
             return PhysicalFile(path, contentType);
         }
 
-        // Notes for the requester. Allowed in every status (pending, approved, rejected).
         [HttpPut("requests/{id:int}/note")]
         public async Task<IActionResult> Note(int id, NoteDto dto)
         {
@@ -63,7 +60,6 @@ namespace EventManagementSystem.Controllers
             return Ok(new { message = "Note saved." });
         }
 
-        // Admins can cancel (soft delete) an event
         [HttpDelete("events/{id:int}")]
         public async Task<IActionResult> CancelEvent(int id)
         {

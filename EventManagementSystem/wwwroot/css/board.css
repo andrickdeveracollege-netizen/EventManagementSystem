@@ -1,5 +1,4 @@
-﻿/* ---------- Landing layout: bulletin board | sign-in (25%), calendar full width below ---------- */
-.home {
+﻿.home {
     display: grid;
     grid-template-columns: minmax(0, 75fr) minmax(260px, 25fr);
     grid-template-areas:
@@ -28,7 +27,6 @@
     min-width: 0;
 }
 
-    /* roomy calendar now that it has the full width */
     .col-cal .cal .day {
         min-height: 92px;
     }
@@ -73,7 +71,6 @@
         margin: 0;
     }
 
-/* ---------- Mini calendar ---------- */
 .cal.mini .dow {
     padding: 3px;
     font-size: .7rem;
@@ -94,7 +91,6 @@
     color: var(--muted);
 }
 
-/* ---------- Cork board (uses /img/bulletin.jpg as the frame; the BULLETIN sign sits at the top) ---------- */
 .cork {
     --u: 1cqw;
     container-type: inline-size;
@@ -107,9 +103,9 @@
 
 .cork-inner {
     position: absolute;
-    top: 23.5%; /* leaves room for the BULLETIN sign */
+    top: 23.5%;
     bottom: 7%;
-    left: 11%; /* and for the paper decorations in the corners */
+    left: 11%;
     right: 11%;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -125,7 +121,6 @@
     margin-top: 10px;
 }
 
-/* ---------- Sticky notes ---------- */
 .note.yellow {
     --bg: #fff59d;
     --c: #f9a825;
@@ -290,7 +285,6 @@
     box-shadow: 2px 5px 9px rgba(0,0,0,.32);
 }
 
-/* ---------- Dashboard side panels ---------- */
 .dash {
     display: grid;
     grid-template-columns: 3fr 1.3fr;
@@ -317,7 +311,6 @@
         border-bottom: 0;
     }
 
-/* ---------- Request form: department blocks ---------- */
 .dept-block {
     border: 1px solid var(--line);
     border-radius: 10px;
@@ -404,8 +397,6 @@
         min-width: 200px;
     }
 
-/* ---------- Phones / tablets ---------- */
-/* tablet: sign-in goes under the board, calendar stays last */
 @media (max-width: 1000px) {
     .home {
         grid-template-columns: 1fr;
@@ -449,7 +440,6 @@
         width: 100%;
     }
 
-    /* the picture frame is too small to read on a phone: use a plain cork panel */
     .cork {
         --u: 0.9vw;
         aspect-ratio: auto;
@@ -471,7 +461,6 @@
     }
 }
 
-/* long emails / names wrap inside the narrow right column instead of overflowing */
 .side {
     min-width: 0;
 }

@@ -19,7 +19,6 @@ namespace EventManagementSystem.Mapper
             f.Id, f.Name, f.Department, OfficeName(f.Department),
             f.Department == DepartmentType.College, f.Capacity, f.IsOther);
 
-        // "Others: Chapel" when the requester typed their own facility name
         public static string DisplayName(this EventFacility ef) =>
             ef.Facility is { IsOther: true } && !string.IsNullOrWhiteSpace(ef.OtherName)
                 ? $"Others: {ef.OtherName}"

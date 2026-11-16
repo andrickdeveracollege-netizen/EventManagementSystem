@@ -4,9 +4,6 @@ using EventManagementSystem.Service;
 
 namespace EventManagementSystem.Service;
 
-// Angelicum email formats:
-//   students:             firstname.surname.college | .shs | .jhs | .elem  @ustangelicum.edu.ph
-//   faculty / staff:      firstname.surname                                @ustangelicum.edu.ph
 public static class EmailRoleParser
 {
     private static readonly Dictionary<string, YearLevel> Levels = new(StringComparer.OrdinalIgnoreCase)

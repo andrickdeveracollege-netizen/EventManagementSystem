@@ -3,7 +3,6 @@ if (Auth.user.isAdmin) { location.href = '/admin.html'; throw new Error('Admins 
 renderNav(document.getElementById('nav'));
 const myRegs = document.getElementById('myRegs');
 
-// ---------- My registrations (attendee) ----------
 async function loadMyRegs() {
     try {
         const list = await api('/api/registrations/mine');

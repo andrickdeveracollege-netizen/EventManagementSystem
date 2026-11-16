@@ -7,7 +7,6 @@ using EventManagementSystem.Repository;
 
 namespace EventManagementSystem.Service;
 
-// Used only by the super admin (admin@ustangelicum.edu.ph)
 public class UserAdminService : IUserAdminService
 {
     private readonly IUserRepository _users;
@@ -24,7 +23,6 @@ public class UserAdminService : IUserAdminService
             .Select(u => new UserDto(u.Id, u.Email, u.FullName, u.Role, u.Position, u.Level, u.AdminDepartment))
             .ToList();
 
-    // Back to the default password (Auth:DefaultPassword). The user should change it after signing in.
     public async Task ResetPasswordAsync(Guid id)
     {
         var user = await _users.GetByIdAsync(id) ?? throw new ServiceException("User not found.", 404);
@@ -36,7 +34,6 @@ public class UserAdminService : IUserAdminService
         await _users.SaveAsync();
     }
 
-    // Only faculty / staff can be made Administrator (and back). Students keep their level.
     public async Task SetPositionAsync(Guid id, SetPositionDto dto)
     {
         var user = await _users.GetByIdAsync(id) ?? throw new ServiceException("User not found.", 404);

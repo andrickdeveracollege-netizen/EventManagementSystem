@@ -30,7 +30,6 @@ namespace EventManagementSystem.Controllers
             return StatusCode(StatusCodes.Status201Created, await _events.CreateRequestAsync(dto, who));
         }
 
-        // Manage with the email + code that was shown after submitting
         [HttpGet("events/{id:int}")]
         public async Task<IActionResult> Get(int id, [FromQuery] string email, [FromQuery] string code)
             => Ok(await _events.GetGuestEventAsync(id, email, code));

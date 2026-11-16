@@ -1,6 +1,4 @@
-﻿// Shared facility calendar (used on the landing page and the dashboard).
-// Reads the public /api/events/calendar endpoint.
-function initCalendar({ grid, title, filter, dayList, prev, next, today }) {
+﻿function initCalendar({ grid, title, filter, dayList, prev, next, today }) {
     let view = new Date();
     view.setDate(1);
     let events = [];

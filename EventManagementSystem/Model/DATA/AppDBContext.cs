@@ -92,8 +92,6 @@ namespace EventManagementSystem.Model.DATA
             b.Entity<Equipment>().HasData(SeedEquipment());
         }
 
-        // Capacities are placeholders: change the numbers to the real room sizes.
-        // Keep the order, because the Ids come from it.
         private static List<Facility> SeedFacilities()
         {
             var list = new List<Facility>();
@@ -101,7 +99,6 @@ namespace EventManagementSystem.Model.DATA
             void Add(DepartmentType d, string name, int? capacity, bool other = false) =>
                 list.Add(new Facility { Id = id++, Name = name, Department = d, Capacity = capacity, IsOther = other });
 
-            // Auxiliary (big events: Field, Gym)
             Add(DepartmentType.Auxiliary, "Field", 2000);
             Add(DepartmentType.Auxiliary, "Gym", 1000);
             Add(DepartmentType.Auxiliary, "Dance Room", 40);
@@ -110,19 +107,16 @@ namespace EventManagementSystem.Model.DATA
             Add(DepartmentType.Auxiliary, "Elem Grounds", 800);
             Add(DepartmentType.Auxiliary, "Others", null, other: true);
 
-            // ITMC
             foreach (var n in new[] { "Comlab 1", "Comlab 2", "Comlab 3", "Comlab 4", "Comlab 5" })
                 Add(DepartmentType.ITMC, n, 40);
             Add(DepartmentType.ITMC, "Others", null, other: true);
 
-            // College (Ms. Judith)
             Add(DepartmentType.College, "AULA MAYOR", 100);
             Add(DepartmentType.College, "Deans Conference", 20);
             foreach (var n in new[] { "UNO", "DOS", "TRES", "QUATRO", "CINCO", "SEIS", "CARITAS", "FORTITUDO", "JUSTITIA" })
                 Add(DepartmentType.College, n, 45);
             Add(DepartmentType.College, "Others", null, other: true);
 
-            // TVET (Ms. Chavez)
             Add(DepartmentType.TVET, "Single Room", 10);
             Add(DepartmentType.TVET, "Double Room", 20);
             Add(DepartmentType.TVET, "Classrooms", 45);
@@ -132,7 +126,6 @@ namespace EventManagementSystem.Model.DATA
             Add(DepartmentType.TVET, "Ange Cafe", 50);
             Add(DepartmentType.TVET, "Others", null, other: true);
 
-            // Library
             Add(DepartmentType.Library, "MAIN LIB", 100);
             Add(DepartmentType.Library, "LOWER LIB", 60);
             Add(DepartmentType.Library, "IMC", 40);
@@ -140,7 +133,6 @@ namespace EventManagementSystem.Model.DATA
             return list;
         }
 
-        // Keep the existing Ids stable once migrated.
         private static List<Equipment> SeedEquipment()
         {
             var list = new List<Equipment>();

@@ -19,7 +19,6 @@ namespace EventManagementSystem.Controllers
         public static DepartmentType? Dept(this ClaimsPrincipal u) =>
             Enum.TryParse<DepartmentType>(u.FindFirst("dept")?.Value, out var d) ? d : null;
 
-        // Admins and the super admin only manage events. They do not request or register.
         public static void EnsureNotAdmin(this ClaimsPrincipal u, string what)
         {
             if (u.IsAnyAdmin()) throw new ServiceException($"Admin accounts cannot {what}.", 403);

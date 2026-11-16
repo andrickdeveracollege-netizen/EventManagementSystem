@@ -13,12 +13,10 @@ namespace EventManagementSystem.Controllers
         private readonly IEventService _events;
         public EventsController(IEventService events) => _events = events;
 
-        // Public: bulletin board on the landing page (approved, upcoming)
         [HttpGet("bulletin")]
         [AllowAnonymous]
         public async Task<IActionResult> Bulletin() => Ok(await _events.GetBulletinAsync());
 
-        // Public: shared facility calendar (approved + pending, so slots stay held while under review)
         [HttpGet("calendar")]
         [AllowAnonymous]
         public async Task<IActionResult> Calendar([FromQuery] DateTime from, [FromQuery] DateTime to, [FromQuery] int? facilityId)
@@ -28,7 +26,6 @@ namespace EventManagementSystem.Controllers
         [Authorize]
         public async Task<IActionResult> Mine() => Ok(await _events.GetMineAsync(User.Email()));
 
-        // Who registered. Requester and the offices only.
         [HttpGet("{id:int}/registrations")]
         [Authorize]
         public async Task<IActionResult> Registrants(int id) =>
@@ -47,7 +44,6 @@ namespace EventManagementSystem.Controllers
         [Authorize]
         public async Task<IActionResult> Detail(int id) => Ok(await _events.GetDetailAsync(id));
 
-        // The requester's role comes from the account (email format), it is not typed in the form
         [HttpPost("request")]
         [Authorize]
         [Consumes("multipart/form-data")]

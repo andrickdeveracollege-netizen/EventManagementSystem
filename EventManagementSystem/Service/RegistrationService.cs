@@ -42,7 +42,6 @@ public class RegistrationService : IRegistrationService
         if (!ev.RequiresRegistration) throw new ServiceException("This is an institutional event. No registration is needed.");
         if (ev.EndTime < DateTime.Now) throw new ServiceException("This event has already ended.");
 
-        // Target audience rule
         switch (who.Role)
         {
             case RequesterRole.Student when (ev.TargetAudience & who.Level) == 0:
@@ -55,12 +54,11 @@ public class RegistrationService : IRegistrationService
         if (await _registrations.ExistsAsync(ev.Id, email))
             throw new ServiceException("You are already registered for this event.", 409);
 
-        // Capacity rule: registrations can never exceed the event capacity
         if (await _registrations.CountActiveAsync(ev.Id) >= ev.Capacity)
             throw new ServiceException("This event is already full.", 409);
 
         var previous = await _registrations.GetAsync(ev.Id, email);
-        if (previous != null)   // re-register after a cancellation
+        if (previous != null)
         {
             previous.Cancelled = false;
             previous.FullName = who.FullName.Trim();

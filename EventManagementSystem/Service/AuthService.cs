@@ -29,7 +29,6 @@ public class AuthService : IAuthService
         if (await _users.GetByEmailAsync(email) != null)
             throw new ServiceException("An account with this email already exists.");
 
-        // Role and year level come from the email format, the user does not choose them
         var (position, level) = EmailRoleParser.Parse(email);
 
         var user = new User
@@ -52,7 +51,7 @@ public class AuthService : IAuthService
 
         var user = await _users.GetByEmailAsync(email);
         if (user == null || !PasswordHasher.Verify(dto.Password, user.PasswordHash))
-            throw new ServiceException("Invalid email or password.");   // 400 on purpose (UI treats 401 as expired session)
+            throw new ServiceException("Invalid email or password.");
 
         return BuildResponse(user);
     }

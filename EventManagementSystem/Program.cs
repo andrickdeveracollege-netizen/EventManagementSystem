@@ -75,7 +75,6 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Turn ServiceException into a consistent JSON error: { "message": "..." } with the right status code
 app.Use(async (ctx, next) =>
 {
     try { await next(); }
@@ -89,7 +88,6 @@ app.Use(async (ctx, next) =>
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-    // Use the migrations when the project has them; otherwise build the schema straight from the model
     if (db.Database.GetMigrations().Any()) await db.Database.MigrateAsync();
     else await db.Database.EnsureCreatedAsync();
     await DbInitializer.SeedAsync(db, app.Configuration);

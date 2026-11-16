@@ -8,7 +8,6 @@ const iMsg = document.getElementById('iMsg');
 const usersBox = document.getElementById('users');
 let allUsers = [];
 
-// ---------- institutional event ----------
 api('/api/facilities').then(facs => {
     const groups = {};
     facs.filter(f => !f.isOther).forEach(f => (groups[f.department] ??= []).push(f));
@@ -41,7 +40,6 @@ instForm.addEventListener('submit', async e => {
     } catch (err) { showMsg(iMsg, err.message, false); }
 });
 
-// ---------- users ----------
 function userRow(u) {
     const isAdminAcct = u.role !== 'User';
     const pos = isAdminAcct ? `<span class="muted">${esc(u.role)}${u.department ? ' · ' + esc(u.department) : ''}</span>`

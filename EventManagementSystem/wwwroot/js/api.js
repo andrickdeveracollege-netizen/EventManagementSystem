@@ -14,8 +14,6 @@
     logout() { this.clear(); location.href = '/index.html'; }
 };
 
-// Single place that talks to the API: attaches the token, handles 401 / 403 and error bodies.
-// Public (guest) calls work without a token. A 401 only happens on protected endpoints.
 async function api(path, { method = 'GET', body, form } = {}) {
     const headers = {};
     if (Auth.token) headers['Authorization'] = 'Bearer ' + Auth.token;
@@ -61,7 +59,6 @@ async function openEndorsement(id) {
     }
 }
 
-// Download a file (the Excel export). Sends the token when signed in, nothing for guests.
 async function downloadFile(url) {
     const headers = Auth.token ? { Authorization: 'Bearer ' + Auth.token } : {};
     const res = await fetch(url, { headers });
@@ -77,7 +74,6 @@ async function downloadFile(url) {
     setTimeout(() => URL.revokeObjectURL(blobUrl), 4000);
 }
 
-// Pop-up with everyone who registered. listUrl returns the list, exportUrl returns the .xlsx
 async function openRegistrants(listUrl, exportUrl) {
     document.getElementById('regModal')?.remove();
     const modal = document.createElement('div');
@@ -114,8 +110,6 @@ const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': 
 const fmt = d => new Date(d).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
 const fmtTime = d => new Date(d).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
 const pad = n => String(n).padStart(2, '0');
-// Date and time are separate boxes and the end date is always shown.
-// "Same date as the start" (ticked by default) locks the end date to the start date, so only the end TIME matters.
 const Range = {
     html(p, startLabel = 'Start', endLabel = 'End') {
         const today = isoLocal(new Date()).slice(0, 10);
@@ -140,7 +134,7 @@ const Range = {
         const endDate = document.getElementById(p + 'EndDate');
         const sync = () => {
             endDate.disabled = same.checked;
-            if (same.checked) endDate.value = startDate.value;     // locked to the start date
+            if (same.checked) endDate.value = startDate.value;
         };
         same.onchange = sync;
         startDate.oninput = sync;
@@ -156,7 +150,6 @@ const Range = {
         document.getElementById(p + 'Same').checked = s.toDateString() === e.toDateString();
         this.wire(p);
     },
-    // returns { start: Date, end: Date } or { error }
     read(p) {
         const g = id => document.getElementById(p + id).value;
         if (!g('StartDate')) return { error: 'Please set the start date.' };
@@ -185,7 +178,6 @@ function toast(text, ok = true) {
     setTimeout(() => el.remove(), 4500);
 }
 
-// Disables a button while a request is running so a form cannot be submitted twice
 async function withBusy(btn, work) {
     const label = btn.textContent;
     btn.disabled = true;
@@ -230,7 +222,6 @@ function renderNav(el) {
         return;
     }
 
-    // Admins only manage events, so they get no Register / Request links
     const dashboard = u.isAdmin ? '' :
         `<div class="nav-dropdown"><a class="nav-dropdown-toggle" href="/dashboard.html">Dashboard ▾</a><div class="nav-dropdown-menu"><a href="/register.html">Register for an Event</a><a href="/request.html">Request an Event</a></div></div>`;
     const myEvents = u.isAdmin ? '' : '<a href="/myevents.html">My Events</a>';
@@ -246,7 +237,6 @@ function renderNav(el) {
 }
 
 function markActive(el) {
-    // My Events and My Registrations are two pages of the same section
     const path = location.pathname === '/myregistrations.html' ? '/myevents.html' : location.pathname;
     for (const a of el.querySelectorAll('a')) {
         if (a.href && new URL(a.href).pathname === path) a.classList.add('active');

@@ -20,7 +20,6 @@ const calendar = initCalendar({
     today: document.getElementById('today')
 });
 
-// ---------- Change password ----------
 document.getElementById('pwForm').addEventListener('submit', async e => {
     e.preventDefault();
     const msg = document.getElementById('pwMsg');

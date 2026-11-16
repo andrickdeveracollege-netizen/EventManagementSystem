@@ -52,7 +52,6 @@ public class EventService : IEventService
     public async Task<List<FacilityDto>> GetFacilitiesAsync() =>
         (await _facilities.GetAllAsync()).Select(f => f.ToDto()).ToList();
 
-    // ---------------------------------------------------------------- create
 
     public async Task<EventCreatedDto> CreateRequestAsync(EventRequestDto dto, Requester who)
     {
@@ -71,9 +70,8 @@ public class EventService : IEventService
         var allFacilities = (await _facilities.GetAllAsync()).ToDictionary(f => f.Id);
         var catalog = (await _equipment.GetAllAsync()).ToDictionary(x => x.Id);
 
-        // Validate everything BEFORE saving any file
         var requests = new List<(DepartmentRequestInputDto Input, DepartmentRequest Entity)>();
-        var bookable = new List<int>();          // real facilities (not "Others") that can clash with other events
+        var bookable = new List<int>();
         var shownNames = new List<string>();
 
         foreach (var input in dto.Departments)
@@ -99,7 +97,6 @@ public class EventService : IEventService
                     continue;
                 }
 
-                // Small rooms are not allowed for big events
                 if (f.Capacity.HasValue && f.Capacity.Value < dto.Capacity)
                     throw new ServiceException($"{f.Name} only fits {f.Capacity} people, but you expect {dto.Capacity}. Choose a bigger facility.");
 
@@ -132,16 +129,13 @@ public class EventService : IEventService
             if (dr.Facilities.Count == 0 && dr.EquipmentItems.Count == 0)
                 throw new ServiceException($"Pick at least one facility or equipment for {office}, or untick it.");
 
-            // Each department can get its own letter, but it is optional for every office.
             if (input.Endorsement is { Length: > 0 }) ValidateFile(input.Endorsement, office);
 
             requests.Add((input, dr));
         }
 
-        // Double-booking guard. School events may replace PENDING guest requests, nothing else.
         await ResolveConflictsAsync(bookable, dto.StartTime, dto.EndTime, who.IsGuest, null);
 
-        // Save the letters, then the event
         foreach (var (input, dr) in requests)
         {
             if (input.Endorsement is { Length: > 0 })
@@ -175,7 +169,6 @@ public class EventService : IEventService
         return new EventCreatedDto(Summary(ev, bookable, shownNames), ev.ManageCode);
     }
 
-    // Super admin posts a school-wide event: approved right away, nobody needs to register
     public async Task<EventCreatedDto> CreateInstitutionalAsync(InstitutionalEventDto dto, string adminEmail, string adminName)
     {
         if (dto.TargetAudience == YearLevel.None || ((int)dto.TargetAudience & ~(int)YearLevel.All) != 0)
@@ -233,7 +226,6 @@ public class EventService : IEventService
         return new EventCreatedDto(Summary(ev, ids, names), ev.ManageCode);
     }
 
-    // ------------------------------------------------------- requester side
 
     public async Task<List<EventDetailDto>> GetMineAsync(string email) =>
         (await _events.GetMineAsync(email.ToLowerInvariant())).Select(e => e.ToDetail()).ToList();
@@ -272,11 +264,9 @@ public class EventService : IEventService
         return await GetDetailAsync(id);
     }
 
-    // Soft delete: the event stays in the database with status Cancelled
     public async Task CancelAsync(int id, string email) =>
         await CancelCoreAsync(await LoadOwnedAsync(id, email));
 
-    // ---------------------------------------------------------------- guests
 
     public async Task<EventDetailDto> GetGuestEventAsync(int id, string email, string code)
     {
@@ -293,9 +283,7 @@ public class EventService : IEventService
     public async Task CancelGuestAsync(int id, string email, string code) =>
         await CancelCoreAsync(await LoadGuestAsync(id, email, code));
 
-    // ----------------------------------------------------------------- admin
 
-    // Report: per event, how many tickets (registrations) are taken vs capacity
     public async Task<List<EventReportRowDto>> GetReportAsync(DepartmentType dept) =>
         (await _events.GetForDepartmentAsync(dept))
             .Select(e =>
@@ -341,7 +329,6 @@ public class EventService : IEventService
         dr.ReviewedAt = DateTime.Now;
         dr.RejectionReason = reason.Trim();
 
-        // One "no" rejects the whole event, so the other offices' pending parts close too
         foreach (var other in dr.CampusEvent!.DepartmentRequests.Where(o => o.Id != dr.Id && o.Status == EventStatus.Pending))
         {
             other.Status = EventStatus.Rejected;
@@ -387,7 +374,6 @@ public class EventService : IEventService
         _ => level.ToString()
     };
 
-    // A note can be added or changed at any time: pending, approved, rejected, even after the event is cancelled.
     public async Task SetNoteAsync(int id, DepartmentType? dept, string note)
     {
         var dr = await _deptRequests.GetByIdAsync(id) ?? throw new ServiceException("Request not found.", 404);
@@ -398,7 +384,6 @@ public class EventService : IEventService
         await _deptRequests.SaveAsync();
     }
 
-    // Admins can cancel (soft delete) an event. An office admin only for events that involve their office.
     public async Task AdminCancelEventAsync(int eventId, DepartmentType? dept)
     {
         var ev = await _events.GetByIdAsync(eventId) ?? throw new ServiceException("Event not found.", 404);
@@ -423,9 +408,7 @@ public class EventService : IEventService
                 dr.EndorsementOriginalName ?? dr.EndorsementStoredName);
     }
 
-    // --------------------------------------------------------------- helpers
 
-    // Optional field: blank becomes null
     private static string? CleanDetail(string? text) => string.IsNullOrWhiteSpace(text) ? null : text.Trim();
 
     private static string NewManageCode() => Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
@@ -436,7 +419,6 @@ public class EventService : IEventService
         ev.StartTime, ev.EndTime, ev.TargetAudience, ev.AudienceDetail, ev.Capacity, 0,
         ev.IsInstitutional, ev.RequiresRegistration, ev.Status);
 
-    // Outsiders must use the guest form; school emails have to sign in
     private void RejectSchoolEmail(string email)
     {
         var domain = _config["Auth:AllowedEmailDomain"];
@@ -460,8 +442,6 @@ public class EventService : IEventService
             throw new ServiceException("Outsiders can only book on weekends (Saturday and Sunday).");
     }
 
-    // Same facility + overlapping time against pending OR approved events = conflict (409).
-    // Exception: a school event may take the place of a PENDING guest request (school has priority).
     private async Task ResolveConflictsAsync(List<int> facilityIds, DateTime start, DateTime end, bool requesterIsGuest, int? excludeEventId)
     {
         var conflicts = await _events.GetConflictsAsync(facilityIds, start, end, approvedOnly: false, excludeEventId);
@@ -500,7 +480,6 @@ public class EventService : IEventService
         ev.StartTime = dto.StartTime;
         ev.EndTime = dto.EndTime;
 
-        // A new date has to be approved again by every office (institutional events stay approved)
         if (!ev.IsInstitutional)
         {
             foreach (var dr in ev.DepartmentRequests.Where(d => d.Status == EventStatus.Approved))
@@ -523,7 +502,6 @@ public class EventService : IEventService
         await _events.SaveAsync();
     }
 
-    // Any Rejected -> Rejected; all Approved -> Approved; otherwise Pending
     private static void RecomputeStatus(CampusEvent ev)
     {
         var all = ev.DepartmentRequests;

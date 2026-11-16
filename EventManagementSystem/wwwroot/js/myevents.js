@@ -13,7 +13,6 @@ let mine = [];
 let editingId = null;
 let movingId = null;
 
-// ---------- My event requests (organizer): see registrations, edit, move, cancel ----------
 function eventRow(d) {
     const e = d.event;
     const open = e.status === 'Pending' || e.status === 'Approved';
@@ -87,7 +86,6 @@ editForm.addEventListener('submit', async e => {
     } catch (err) { showMsg(editMsg, err.message, false); }
 });
 
-// ---------- Move (reschedule) ----------
 function openMove(id) {
     const d = mine.find(x => x.event.id === id);
     movingId = id;
@@ -111,7 +109,7 @@ moveForm.addEventListener('submit', async e => {
         moveModal.classList.remove('open');
         toast('Event moved. The offices will review the new date.');
         loadMyEvents();
-    } catch (err) { showMsg(moveMsg, err.message, false); }   // e.g. 409 "Already booked for this time: Gym"
+    } catch (err) { showMsg(moveMsg, err.message, false); }
 });
 
 
