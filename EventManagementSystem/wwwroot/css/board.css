@@ -450,20 +450,74 @@
     }
 
     /* the picture frame is too small to read on a phone: use a plain cork panel */
+    /* ---------- Cork board: pure CSS (cork texture + wood frame + BULLETIN sign) ---------- */
     .cork {
-        --u: 0.9vw;
-        aspect-ratio: auto;
-        background: #c8975a;
-        border: 10px solid #d9b98a;
-        border-radius: 8px;
-        padding: 14px;
+        --u: 1cqw;
+        container-type: inline-size;
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 12px;
+        background: radial-gradient(circle at 20% 30%, rgba(255,255,255,.14) 0 2px, transparent 3px) 0 0 / 23px 23px, radial-gradient(circle at 70% 60%, rgba(90,50,15,.22) 0 2px, transparent 3px) 0 0 / 17px 17px, radial-gradient(circle at 40% 80%, rgba(90,50,15,.16) 0 1.5px, transparent 2.5px) 0 0 / 13px 13px, radial-gradient(circle at 85% 15%, rgba(255,255,255,.10) 0 1.5px, transparent 2.5px) 0 0 / 29px 29px, #c8975a;
+        box-shadow: inset 0 0 0 10px #8a5a2b, inset 0 0 0 13px #5e3a17, inset 0 0 60px rgba(60,30,5,.45);
+        filter: drop-shadow(0 8px 14px rgba(0,0,0,.3));
     }
 
+        .cork::before {
+            content: 'BULLETIN';
+            position: absolute;
+            z-index: 1;
+            top: 3.5%;
+            left: 50%;
+            transform: translateX(-50%) rotate(-1deg);
+            padding: calc(var(--u) * .7) calc(var(--u) * 4);
+            font-family: Georgia, 'Times New Roman', serif;
+            font-weight: 700;
+            font-size: calc(var(--u) * 3.2);
+            letter-spacing: .28em;
+            color: #7a1f1f;
+            background: #fff8e1;
+            border: 3px solid #5e3a17;
+            border-radius: 6px;
+            box-shadow: 0 4px 8px rgba(0,0,0,.4);
+        }
+
     .cork-inner {
-        position: static;
-        grid-template-columns: 1fr;
-        grid-template-rows: none;
-        --u: 3.2vw;
+        position: absolute;
+        top: 21%;
+        bottom: 6%;
+        left: 6%;
+        right: 6%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        gap: calc(var(--u) * 2.4) calc(var(--u) * 2.2);
+    }
+
+    @media (max-width: 700px) {
+        .cork {
+            --u: 0.9vw;
+            aspect-ratio: auto;
+            padding: 22px 16px 16px;
+        }
+
+            .cork::before {
+                position: static;
+                display: block;
+                width: max-content;
+                max-width: 100%;
+                margin: 0 auto 16px;
+                transform: none;
+                font-size: 1.2rem;
+                padding: 6px 22px;
+            }
+
+        .cork-inner {
+            position: static;
+            grid-template-columns: 1fr;
+            grid-template-rows: none;
+            --u: 3.2vw;
+        }
     }
 
     .note {
