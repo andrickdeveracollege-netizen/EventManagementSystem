@@ -1,4 +1,4 @@
-﻿namespace EventManagement.Service;
+﻿namespace EventManagementSystem.Service;
 
 public class ServiceException : Exception
 {

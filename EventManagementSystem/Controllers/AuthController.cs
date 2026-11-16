@@ -1,5 +1,5 @@
-﻿using EventManagement.Service;
-using EventManagementSystem.Model.DTO;
+﻿using EventManagementSystem.Model.DTO;
+using EventManagementSystem.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
