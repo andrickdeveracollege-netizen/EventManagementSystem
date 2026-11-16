@@ -82,8 +82,8 @@ In Visual Studio: right-click the project, **Manage User Secrets**, paste the sa
 | Admin – Library | library@ustangelicum.edu.ph | Admin@2026 |
 | College student | juan.delacruz.college@ustangelicum.edu.ph | Student@2026 |
 | SHS student | maria.santos.shs@ustangelicum.edu.ph | Student@2026 |
-| Faculty | oliver.lacap@ustangelicum.edu.ph | Faculty@2026 |
-| Administrator | benjo.lopez@ustangelicum.edu.ph | Faculty@2026 |
+| Faculty | pedro.reyes@ustangelicum.edu.ph | Faculty@2026 |
+| Administrator | ana.lopez@ustangelicum.edu.ph | Faculty@2026 |
 
 Seed data: facilities (capacities are placeholders, edit in AppDBContext), equipment, and one approved sample event.
 
