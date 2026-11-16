@@ -2,7 +2,7 @@
 using EventManagementSystem.Model.Domain;
 using EventManagementSystem.Service;
 
-namespace EventManagement.Service;
+namespace EventManagementSystem.Service;
 
 // Angelicum email formats:
 //   students:             firstname.surname.college | .shs | .jhs | .elem  @ustangelicum.edu.ph

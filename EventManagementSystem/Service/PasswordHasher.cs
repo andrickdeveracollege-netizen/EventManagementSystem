@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace EventManagement.Service;
+namespace EventManagementSystem.Service;
 
 public static class PasswordHasher
 {

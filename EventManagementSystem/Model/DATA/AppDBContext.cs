@@ -165,3 +165,4 @@ namespace EventManagementSystem.Model.DATA
             return list;
         }
     }
+}
