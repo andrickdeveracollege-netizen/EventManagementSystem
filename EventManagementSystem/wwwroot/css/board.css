@@ -440,6 +440,7 @@
         width: 100%;
     }
 
+    /* the picture frame is too small to read on a phone: use a plain cork panel */
     .cork {
         --u: 0.9vw;
         aspect-ratio: auto;
@@ -449,11 +450,12 @@
         padding: 14px;
     }
 
-    .cork-inner {
-        position: static;
-        grid-template-columns: 1fr;
-        grid-template-rows: none;
-        --u: 3.2vw;
+        .cork-inner {
+            position: static;
+            grid-template-columns: 1fr;
+            grid-template-rows: none;
+            --u: 3.2vw;
+        }
     }
 
     .note {
