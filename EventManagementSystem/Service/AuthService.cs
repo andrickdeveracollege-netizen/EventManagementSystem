@@ -105,19 +105,4 @@ public class AuthService : IAuthService
             user.Email, user.FullName, isAdmin, user.Role == UserRole.SuperAdmin,
             user.AdminDepartment, user.Position, user.Level);
     }
-
-    public Task<AuthResponseDto> RegisterAsync(RegisterAccountDto dto)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<AuthResponseDto> LoginAsync(LoginDto dto)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task ChangePasswordAsync(string email, ChangePasswordDto dto)
-    {
-        throw new NotImplementedException();
-    }
 }
