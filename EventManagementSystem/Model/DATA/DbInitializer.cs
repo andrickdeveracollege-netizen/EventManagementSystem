@@ -1,6 +1,5 @@
 ﻿using EventManagementSystem.Model.Domain;
 using EventManagementSystem.Service;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventManagementSystem.Model.DATA
