@@ -1,6 +1,11 @@
-﻿namespace EventManagementSystem.Service
+﻿using EventManagementSystem.Model.DTO;
+
+namespace EventManagementSystem.Service
 {
-    public class IUserAdminService
+    public interface IUserAdminService
     {
+        Task<List<UserDto>> GetUsersAsync();
+        Task ResetPasswordAsync(Guid id);
+        Task SetPositionAsync(Guid id, SetPositionDto dto);
     }
 }
