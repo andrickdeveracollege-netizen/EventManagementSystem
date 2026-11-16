@@ -1,11 +1,18 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagementSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/equipment")]
+    [AllowAnonymous]
     public class EquipmentController : ControllerBase
     {
+        private readonly IEquipmentService _equipment;
+        public EquipmentController(IEquipmentService equipment) => _equipment = equipment;
+
+        [HttpGet]
+        public async Task<IActionResult> GetCatalog() => Ok(await _equipment.GetCatalogAsync());
     }
 }

@@ -1,12 +1,14 @@
 ﻿
 using EventManagementSystem.Model.Domain;
+using EventManagementSystem.Model.DTO;
+using EventManagementSystem.Repository;
 using EventManagementSystem.Service;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace EventManagement.Service;
+namespace EventManagementSystem.Service;
 
 public class AuthService : IAuthService
 {
@@ -102,5 +104,20 @@ public class AuthService : IAuthService
             new JwtSecurityTokenHandler().WriteToken(token),
             user.Email, user.FullName, isAdmin, user.Role == UserRole.SuperAdmin,
             user.AdminDepartment, user.Position, user.Level);
+    }
+
+    public Task<AuthResponseDto> RegisterAsync(RegisterAccountDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<AuthResponseDto> LoginAsync(LoginDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task ChangePasswordAsync(string email, ChangePasswordDto dto)
+    {
+        throw new NotImplementedException();
     }
 }

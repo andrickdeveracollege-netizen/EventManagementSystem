@@ -1,11 +1,19 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EventManagementSystem.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagementSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/facilities")]
+    [AllowAnonymous]
     public class FacilitiesController : ControllerBase
     {
+        private readonly IEventService _events;
+        public FacilitiesController(IEventService events) => _events = events;
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll() => Ok(await _events.GetFacilitiesAsync());
     }
 }

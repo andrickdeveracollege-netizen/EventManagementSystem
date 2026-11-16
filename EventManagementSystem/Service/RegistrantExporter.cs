@@ -2,7 +2,7 @@
 using EventManagementSystem.Model.DTO;
 using EventManagementSystem.Service;
 
-namespace EventManagement.Service;
+namespace EventManagementSystem.Service;
 
 public static class RegistrantExporter
 {

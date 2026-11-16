@@ -1,11 +1,68 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using EventManagement.Service;
+using EventManagementSystem.Model.Domain;
+using EventManagementSystem.Model.DTO;
+using EventManagementSystem.Service;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventManagementSystem.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/guest")]
+    [AllowAnonymous]
     public class GuestController : ControllerBase
     {
+        private readonly IEventService _events;
+        private readonly IRegistrationService _registrations;
+
+        public GuestController(IEventService events, IRegistrationService registrations)
+        {
+            _events = events;
+            _registrations = registrations;
+        }
+
+        [HttpPost("events/request")]
+        [Consumes("multipart/form-data")]
+        [RequestSizeLimit(40_000_000)]
+        public async Task<IActionResult> Request([FromForm] GuestEventRequestDto dto)
+        {
+            var who = new Requester(dto.GuestEmail, RequesterRole.Guest, IsGuest: true, dto.Phone);
+            return StatusCode(StatusCodes.Status201Created, await _events.CreateRequestAsync(dto, who));
+        }
+
+        // Manage with the email + code that was shown after submitting
+        [HttpGet("events/{id:int}")]
+        public async Task<IActionResult> Get(int id, [FromQuery] string email, [FromQuery] string code)
+            => Ok(await _events.GetGuestEventAsync(id, email, code));
+
+        [HttpGet("events/{id:int}/registrations")]
+        public async Task<IActionResult> Registrants(int id, [FromQuery] string email, [FromQuery] string code)
+            => Ok(await _events.GetGuestRegistrantsAsync(id, email, code));
+
+        [HttpGet("events/{id:int}/registrations/export")]
+        public async Task<IActionResult> ExportRegistrants(int id, [FromQuery] string email, [FromQuery] string code)
+        {
+            var (bytes, name) = RegistrantExporter.ToExcel(await _events.GetGuestRegistrantsAsync(id, email, code));
+            return File(bytes, RegistrantExporter.ContentType, name);
+        }
+
+        [HttpPut("events/{id:int}/reschedule")]
+        public async Task<IActionResult> Reschedule(int id, RescheduleDto dto, [FromQuery] string email, [FromQuery] string code)
+            => Ok(await _events.RescheduleGuestAsync(id, dto, email, code));
+
+        [HttpDelete("events/{id:int}")]
+        public async Task<IActionResult> Cancel(int id, [FromQuery] string email, [FromQuery] string code)
+        {
+            await _events.CancelGuestAsync(id, email, code);
+            return NoContent();
+        }
+
+        [HttpPost("registrations")]
+        public async Task<IActionResult> Register(RegistrationDto dto)
+        {
+            await _registrations.RegisterGuestAsync(dto);
+            return StatusCode(StatusCodes.Status201Created, new { message = "You are registered. See you at the event!" });
+        }
     }
 }

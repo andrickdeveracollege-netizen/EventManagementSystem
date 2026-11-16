@@ -2,7 +2,7 @@
 using System.Security;
 using System.Text;
 
-namespace EventManagement.Service;
+namespace EventManagementSystem.Service;
 
 // Writes a plain .xlsx file (Excel opens it directly) without any extra NuGet package.
 // An .xlsx is a zip of a few XML files.

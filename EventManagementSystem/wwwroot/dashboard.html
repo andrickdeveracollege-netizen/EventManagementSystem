@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dashboard – Event Management</title>
+    <link rel="icon" type="image/png" href="/images/angelicum-logo.png" />
+    <link rel="stylesheet" href="/css/site.css?v=20261118" />
+    <link rel="stylesheet" href="/css/board.css?v=20261118" />
+</head>
+<body>
+    <header class="top"><a class="brand" href="/index.html"><img class="brand-logo" src="/images/angelicum-logo.png" alt="UST Angelicum College logo" />UST Angelicum College · Event Management</a><nav id="nav"></nav></header>
+    <main>
+        <h1 id="hello">Dashboard</h1>
+        <div class="muted" id="whoami"></div>
+        <div class="dash">
+            <!-- Shared facility calendar -->
+            <div class="card">
+                <div class="cal-head">
+                    <h2 id="monthTitle"></h2>
+                    <select id="facFilter"><option value="">All facilities</option></select>
+                    <button class="btn ghost" id="prev" type="button">‹</button>
+                    <button class="btn ghost" id="today" type="button">Today</button>
+                    <button class="btn ghost" id="next" type="button">›</button>
+                </div>
+                <div class="muted" style="margin-bottom:8px"><span class="tag approved">Approved events</span></div>
+                <div id="cal" class="cal"></div>
+                <div id="dayList" style="margin-top:16px"></div>
+            </div>
+
+            <div class="stack">
+                <div class="card">
+                    <h2>Request an Event</h2>
+                    <p class="muted">Reserve facilities and equipment. Offices review their own part.</p>
+                    <a class="btn gold" href="/request.html">Request an Event</a>
+                </div>
+                <div class="card">
+                    <h2>Register for an Event</h2>
+                    <p class="muted">Join an approved event open to you.</p>
+                    <a class="btn" href="/register.html">Register for an Event</a>
+                </div>
+                <div class="card">
+                    <h2>Change password</h2>
+                    <form id="pwForm" novalidate>
+                        <label for="curPw">Current password</label><input type="password" id="curPw" />
+                        <label for="newPw">New password (8+ characters)</label><input type="password" id="newPw" />
+                        <div class="msg" id="pwMsg"></div>
+                        <button class="btn" type="submit" id="pwSave" style="margin-top:10px">Change password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api.js?v=20261118"></script>
+    <script src="/js/calendar.js?v=20261118"></script>
+    <script src="/js/dashboard.js?v=20261118"></script>
+</body>
+</html>
