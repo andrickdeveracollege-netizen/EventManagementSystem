@@ -3,7 +3,7 @@ using EventManagementSystem.Model.Domain;
 using Microsoft.EntityFrameworkCore;
 using EventManagementSystem.Repository;
 
-namespace EventManagement.Repository;
+namespace EventManagementSystem.Repository;
 
 public class UserRepository : IUserRepository
 {

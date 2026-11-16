@@ -4,7 +4,7 @@ using EventManagementSystem.Service;
 using EventManagementSystem.Repository;
 using EventManagementSystem.Mapper;
 
-namespace EventManagement.Service;
+namespace EventManagementSystem.Service;
 
 public class EquipmentService : IEquipmentService
 {

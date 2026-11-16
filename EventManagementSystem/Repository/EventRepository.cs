@@ -3,7 +3,7 @@ using EventManagementSystem.Model.Domain;
 using EventManagementSystem.Repository;
 using Microsoft.EntityFrameworkCore;
 
-namespace EventManagement.Repository;
+namespace EventManagementSystem.Repository;
 
 public class EventRepository : IEventRepository
 {
