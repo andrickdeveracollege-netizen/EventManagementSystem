@@ -105,3 +105,5 @@ Seed data: facilities (capacities are placeholders, edit in AppDBContext), equip
 | GET/POST/PUT | /api/superadmin/users, /users/{id}/reset-password, /users/{id}/position, /events | Super admin |
 
 Errors are returned as `{ "message": "..." }` with 400 / 401 / 403 / 404 / 409.
+
+## demo video link: https://youtu.be/62OU9IaXxVo
