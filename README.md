@@ -56,8 +56,8 @@ dotnet run
 ```
 In Visual Studio: right-click the project, **Manage User Secrets**, paste the same keys as JSON; create the database with `Update-Database` in the Package Manager Console.
 
-- Front end: https://localhost:7263/ (or http://localhost:5162/)
-- Swagger UI: https://localhost:7263/swagger — click **Authorize** and paste the token returned by `/api/auth/login`
+- Front end: https://localhost:7255/ (or http://localhost:5297/)
+- Swagger UI: https://localhost:7255/swagger — click **Authorize** and paste the token returned by `/api/auth/login`
 - The app creates and seeds the database on start. If the project has no `Migrations` folder yet it builds the schema from the model; with migrations it applies them.
 
 ## How the requirements are met
