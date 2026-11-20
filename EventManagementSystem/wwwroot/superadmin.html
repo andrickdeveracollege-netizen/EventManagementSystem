@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Super Admin – Event Management</title>
     <link rel="icon" type="image/png" href="/images/angelicum-logo.png" />
-    <link rel="stylesheet" href="/css/site.css?v=20261118" />
-    <link rel="stylesheet" href="/css/board.css?v=20261118" />
+    <link rel="stylesheet" href="/css/site.css?v=20261121" />
+    <link rel="stylesheet" href="/css/board.css?v=20261121" />
 </head>
 <body>
     <header class="top"><a class="brand" href="/index.html">UST Angelicum College · Event Management</a><nav id="nav"></nav></header>
@@ -34,6 +34,10 @@
                 <div data-range="i"></div>
                 <label>Facilities</label>
                 <div id="iFacs"><div class="spinner">Loading…</div></div>
+                <div class="checks" style="margin-top:10px">
+                    <label><input type="checkbox" id="iShow" checked /> Post this event on the bulletin board</label>
+                </div>
+                <div class="hint">Untick for a private event. The calendar then shows its venue as "Reserved" only.</div>
                 <div class="msg" id="iMsg"></div>
                 <button class="btn" type="submit" id="iBtn" style="margin-top:10px">Post event</button>
             </form>
@@ -45,7 +49,7 @@
             <div id="users"><div class="spinner">Loading…</div></div>
         </div>
     </main>
-    <script src="/js/api.js?v=20261118"></script>
-    <script src="/js/superadmin.js?v=20261118"></script>
+    <script src="/js/api.js?v=20261121"></script>
+    <script src="/js/superadmin.js?v=20261121"></script>
 </body>
 </html>

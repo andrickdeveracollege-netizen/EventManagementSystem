@@ -17,5 +17,6 @@ namespace EventManagementSystem.Model.DTO
     int Registered,
     bool IsInstitutional,
     bool RequiresRegistration,
-    EventStatus Status);
+    EventStatus Status,
+    bool ShowOnBulletin);
 }

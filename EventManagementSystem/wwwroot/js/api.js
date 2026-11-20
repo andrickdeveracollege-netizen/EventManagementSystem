@@ -7,7 +7,7 @@
     save(r) { localStorage.setItem('em_token', r.token); localStorage.setItem('em_user', JSON.stringify(r)); },
     clear() { localStorage.removeItem('em_token'); localStorage.removeItem('em_user'); },
     require(adminOnly = false) {
-        if (!this.token) { location.href = '/index.html?signin=1'; return false; }
+        if (!this.token) { location.href = '/index.html?signin=1&next=' + encodeURIComponent(location.pathname + location.search); return false; }
         if (adminOnly && !(this.user && this.user.isAdmin)) { location.href = '/dashboard.html'; return false; }
         return true;
     },
@@ -167,6 +167,28 @@ const Range = {
 const isoLocal = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:00`;
 const statusTag = s => `<span class="tag ${String(s).toLowerCase()}">${esc(s)}</span>`;
 const placesOf = e => e.facilityNames.length ? e.facilityNames.join(', ') : 'Equipment only';
+const privateTag = e => e.showOnBulletin ? '' : ' <span class="tag private">Private · not on bulletin</span>';
+
+// One office's decision, as the requester sees it. Refused equipment does not stop the event.
+function officeLine(x) {
+    const refused = '<span class="tag partial">Equipment refused</span>';
+    const tags = !x.equipmentRejected ? statusTag(x.status)
+        : x.status === 'Approved' ? statusTag('Venue approved') + refused
+        : refused;
+    const why = x.rejectionReason ? ' — ' + esc(x.rejectionReason) : '';
+    const after = x.equipmentRejected ? ' <span class="muted">(the event can go on without it)</span>' : '';
+    const note = x.note ? `<div class="hint-box" style="margin:4px 0"><b>Note from ${esc(x.office)}:</b> ${esc(x.note)}</div>` : '';
+    return `<div class="muted">${esc(x.office)}: ${tags}${why}${after}</div>${note}`;
+}
+
+// Link that the organizer of a private event shares. Events open to outsiders get the guest form;
+// signed-in school users who open it still register with their account.
+const registrationLink = e => `${location.origin}/register.html?eventId=${e.id}${String(e.targetAudience).includes('Outsider') ? '&guest' : ''}`;
+
+async function copyText(text) {
+    try { await navigator.clipboard.writeText(text); toast('Link copied. Send it to the people you invite.'); }
+    catch (err) { window.prompt('Copy this link:', text); }
+}
 
 function showMsg(el, text, ok) { el.textContent = text; el.className = 'msg ' + (ok ? 'ok' : 'err'); }
 

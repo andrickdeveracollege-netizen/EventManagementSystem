@@ -21,8 +21,9 @@ public class DepartmentRequestRepository : IDepartmentRequestRepository
 
     public Task<DepartmentRequest?> GetByIdAsync(int id) =>
         _db.DepartmentRequests
-            .Include(d => d.CampusEvent).ThenInclude(e => e!.DepartmentRequests)
+            .Include(d => d.CampusEvent).ThenInclude(e => e!.DepartmentRequests).ThenInclude(o => o.Facilities)
             .Include(d => d.Facilities).ThenInclude(f => f.Facility)
+            .Include(d => d.EquipmentItems)
             .FirstOrDefaultAsync(d => d.Id == id);
 
     public Task SaveAsync() => _db.SaveChangesAsync();

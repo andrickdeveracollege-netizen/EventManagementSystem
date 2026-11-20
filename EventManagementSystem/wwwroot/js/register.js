@@ -35,6 +35,11 @@ eventSelect.onchange = showAudience;
 (async () => {
     const all = await api('/api/events/bulletin');
     events = all.filter(e => e.requiresRegistration);
+    const linked = Number(new URLSearchParams(location.search).get('eventId'));
+    if (linked && !events.some(e => e.id === linked)) {
+        try { events.unshift(await api(`/api/events/${linked}/open`)); }
+        catch (err) { showMsg(msg, err.message, false); }
+    }
     eventSelect.innerHTML = events.length
         ? events.map(e => `<option value="${e.id}">${esc(e.title)} — ${fmt(e.startTime)} @ ${esc(placesOf(e))}</option>`).join('')
         : '<option value="">No open events</option>';

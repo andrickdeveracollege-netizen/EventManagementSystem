@@ -12,6 +12,7 @@ namespace EventManagementSystem.Model.DTO
         [StringLength(200)] public string? AudienceDetail { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public bool ShowOnBulletin { get; set; } = true;
         [Required, MinLength(1)] public List<int> FacilityIds { get; set; } = new();
     }
 }

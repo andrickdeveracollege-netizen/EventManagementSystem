@@ -16,14 +16,13 @@ let movingId = null;
 function eventRow(d) {
     const e = d.event;
     const open = e.status === 'Pending' || e.status === 'Approved';
-    const offices = d.departments.map(x =>
-        `<div class="muted">${esc(x.office)}: ${statusTag(x.status)}${x.rejectionReason ? ' — ' + esc(x.rejectionReason) : ''}</div>
-     ${x.note ? '<div class="hint-box" style="margin:4px 0"><b>Note from ' + esc(x.office) + ':</b> ' + esc(x.note) + '</div>' : ''}`).join('');
+    const offices = d.departments.map(officeLine).join('');
+    const shareable = !e.showOnBulletin && e.status === 'Approved' && e.requiresRegistration;
     const seats = e.requiresRegistration
         ? `<b>${e.registered}</b> of ${e.capacity} registered`
         : 'Institutional event · no registration';
     return `<div class="req">
-    <strong>${esc(e.title)}</strong> ${statusTag(e.status)}<br>
+    <strong>${esc(e.title)}</strong> ${statusTag(e.status)}${privateTag(e)}<br>
     <span class="muted">${fmt(e.startTime)} · ${seats}</span>
     <div class="muted">${esc(placesOf(e))}</div>
     ${offices}
@@ -31,6 +30,8 @@ function eventRow(d) {
       ${e.requiresRegistration && e.status !== 'Rejected' ? `<button class="btn" data-regs="${e.id}" type="button">Registered (${e.registered})</button>` : ''}
       ${e.status === 'Pending' ? `<button class="btn ghost" data-edit="${e.id}" type="button">Edit</button>` : ''}
       ${open ? `<button class="btn ghost" data-move="${e.id}" type="button">Move</button>` : ''}
+      ${open ? `<button class="btn ghost" data-bulletin="${e.id}" data-show="${!e.showOnBulletin}" type="button">${e.showOnBulletin ? 'Make private' : 'Post on bulletin'}</button>` : ''}
+      ${shareable ? `<button class="btn ghost" data-link="${e.id}" type="button">Copy registration link</button>` : ''}
       ${open ? `<button class="btn bad" data-cancel="${e.id}" type="button">Cancel event</button>` : ''}
     </div></div>`;
 }
@@ -46,8 +47,19 @@ async function loadMyEvents() {
 }
 
 myEvents.addEventListener('click', async ev => {
-    const { edit, move, cancel, regs } = ev.target.dataset;
+    const { edit, move, cancel, regs, bulletin, link } = ev.target.dataset;
     if (regs) { openRegistrants(`/api/events/${regs}/registrations`, `/api/events/${regs}/registrations/export`); return; }
+    if (link) { copyText(registrationLink(mine.find(x => x.event.id === Number(link)).event)); return; }
+    if (bulletin) {
+        try {
+            const r = await withBusy(ev.target, () => api(`/api/events/${bulletin}/bulletin`, {
+                method: 'PUT', body: { show: ev.target.dataset.show === 'true' }
+            }));
+            toast(r.message);
+            await loadMyEvents();
+        } catch (err) { toast(err.message, false); }
+        return;
+    }
     if (edit) openEdit(Number(edit));
     if (move) openMove(Number(move));
     if (cancel && confirm('Cancel this event? Its booked slots will be released.')) {

@@ -15,6 +15,8 @@ namespace EventManagementSystem.Model.DTO
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
+        public bool ShowOnBulletin { get; set; } = true;
+
         public List<DepartmentRequestInputDto> Departments { get; set; } = new();
     }
 }

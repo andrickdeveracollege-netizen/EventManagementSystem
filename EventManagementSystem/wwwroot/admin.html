@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Approvals – Event Management</title>
     <link rel="icon" type="image/png" href="/images/angelicum-logo.png" />
-    <link rel="stylesheet" href="/css/site.css?v=20261118" />
-    <link rel="stylesheet" href="/css/board.css?v=20261118" />
+    <link rel="stylesheet" href="/css/site.css?v=20261121" />
+    <link rel="stylesheet" href="/css/board.css?v=20261121" />
 </head>
 <body>
     <header class="top"><a class="brand" href="/index.html">UST Angelicum College · Event Management</a><nav id="nav"></nav></header>
@@ -37,6 +37,11 @@
     <div class="modal" id="rejectModal">
         <div class="card">
             <h2>Reject request</h2>
+            <div id="rejectScope" class="checks" style="display:none;flex-direction:column;align-items:flex-start;margin-bottom:6px">
+                <label><input type="radio" name="rejectScope" value="all" checked /> Reject the whole request, venue included. The event will be rejected.</label>
+                <label><input type="radio" name="rejectScope" value="equipment" /> Approve the venue, refuse only the equipment. The event can go on without it.</label>
+            </div>
+            <div class="hint" id="rejectHint"></div>
             <label for="reason">Reason (the requester will see this)</label>
             <textarea id="reason" maxlength="500"></textarea>
             <div class="msg" id="rejectMsg"></div>
@@ -47,7 +52,7 @@
         </div>
     </div>
 
-    <script src="/js/api.js?v=20261118"></script>
-    <script src="/js/admin.js?v=20261118"></script>
+    <script src="/js/api.js?v=20261121"></script>
+    <script src="/js/admin.js?v=20261121"></script>
 </body>
 </html>

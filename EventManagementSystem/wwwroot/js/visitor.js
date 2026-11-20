@@ -20,16 +20,16 @@ function renderManage(d) {
     const e = d.event;
     const open = e.status === 'Pending' || e.status === 'Approved';
     manageBox.innerHTML = `<div class="req">
-    <strong>${esc(e.title)}</strong> ${statusTag(e.status)}<br>
+    <strong>${esc(e.title)}</strong> ${statusTag(e.status)}${privateTag(e)}<br>
     <span class="muted">${fmt(e.startTime)} – ${fmtTime(e.endTime)} · ${esc(placesOf(e))} · ${e.registered}/${e.capacity} registered</span>
-    ${d.departments.map(x => `<div class="muted">${esc(x.office)}: ${statusTag(x.status)}${x.rejectionReason ? ' — ' + esc(x.rejectionReason) : ''}</div>
-      ${x.note ? '<div class="hint-box" style="margin:4px 0"><b>Note from ' + esc(x.office) + ':</b> ' + esc(x.note) + '</div>' : ''}`).join('')}
+    ${d.departments.map(officeLine).join('')}
     ${open ? `
     <hr style="border:0;border-top:1px solid var(--line);margin:12px 0" />
     ${Range.html('g', 'Move to (weekend only)', 'End')}
     <div class="msg" id="gMsg"></div>
     <div class="row">
       <button class="btn" id="gRegs" type="button">Registered (${e.registered})</button>
+      ${!e.showOnBulletin && e.status === 'Approved' && e.requiresRegistration ? '<button class="btn ghost" id="gLink" type="button">Copy registration link</button>' : ''}
       <button class="btn ghost" id="gMove" type="button">Move event</button>
       <button class="btn bad" id="gCancel" type="button">Cancel event</button>
     </div>` : ''}
@@ -38,6 +38,8 @@ function renderManage(d) {
     if (!open) return;
     const gMsg = document.getElementById('gMsg');
     Range.wire('g');
+    const linkBtn = document.getElementById('gLink');
+    if (linkBtn) linkBtn.onclick = () => copyText(registrationLink(e));
     document.getElementById('gRegs').onclick = () => openRegistrants(
         `/api/guest/events/${current.id}/registrations?${query()}`,
         `/api/guest/events/${current.id}/registrations/export?${query()}`);

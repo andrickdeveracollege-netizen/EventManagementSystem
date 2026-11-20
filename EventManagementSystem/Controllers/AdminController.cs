@@ -41,8 +41,8 @@ namespace EventManagementSystem.Controllers
         [HttpPost("requests/{id:int}/reject")]
         public async Task<IActionResult> Reject(int id, RejectDto dto)
         {
-            await _events.RejectAsync(id, Scope, Email, dto.Reason);
-            return Ok(new { message = "Request rejected." });
+            await _events.RejectAsync(id, Scope, Email, dto.Reason, dto.EquipmentOnly);
+            return Ok(new { message = dto.EquipmentOnly ? "Venue approved, equipment refused." : "Request rejected." });
         }
 
         [HttpGet("requests/{id:int}/endorsement")]

@@ -80,7 +80,9 @@ authForm.addEventListener('submit', async e => {
         const r = await withBusy(document.getElementById('authSubmit'),
             () => api(mode === 'up' ? '/api/auth/register' : '/api/auth/login', { method: 'POST', body }));
         Auth.save(r);
-        location.href = r.isAdmin ? '/admin.html' : '/dashboard.html';
+        const next = new URLSearchParams(location.search).get('next');
+        const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : null;
+        location.href = r.isAdmin ? '/admin.html' : (safeNext || '/dashboard.html');
     } catch (err) {
         showMsg(authMsg, err.message, false);
     }

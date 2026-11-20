@@ -22,6 +22,7 @@ public class CampusEvent
     public bool IsInstitutional { get; set; }                
     public bool RequiresRegistration { get; set; } = true;     
     public string ManageCode { get; set; } = string.Empty;     
+    public bool ShowOnBulletin { get; set; } = true;           // false = private: not posted, shown as "Reserved" on the calendar
 
     public EventStatus Status { get; set; } = EventStatus.Pending;
     public DateTime CreatedAt { get; set; } = DateTime.Now;

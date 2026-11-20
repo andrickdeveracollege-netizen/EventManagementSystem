@@ -32,10 +32,13 @@ instForm.addEventListener('submit', async e => {
             method: 'POST',
             body: {
                 title: g('iTitle'), organization: g('iOrg'), purpose: g('iPurpose'), targetAudience: aud, audienceDetail: g('iDetail') || null,
-                startTime: isoLocal(range.start), endTime: isoLocal(range.end), facilityIds: facs
+                startTime: isoLocal(range.start), endTime: isoLocal(range.end), facilityIds: facs,
+                showOnBulletin: document.getElementById('iShow').checked
             }
         }));
-        showMsg(iMsg, 'School event posted. It is on the bulletin now.', true);
+        showMsg(iMsg, document.getElementById('iShow').checked
+            ? 'School event posted. It is on the bulletin now.'
+            : 'School event posted as private. Its venue shows as "Reserved" on the calendar.', true);
         instForm.reset();
     } catch (err) { showMsg(iMsg, err.message, false); }
 });

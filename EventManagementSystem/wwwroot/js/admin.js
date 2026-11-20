@@ -15,6 +15,8 @@ const list = document.getElementById('list');
 const rejectModal = document.getElementById('rejectModal');
 const rejectMsg = document.getElementById('rejectMsg');
 const reasonInput = document.getElementById('reason');
+const rejectScope = document.getElementById('rejectScope');
+const rejectHint = document.getElementById('rejectHint');
 let tab = 'Pending';
 let rejectingId = null;
 
@@ -27,17 +29,17 @@ function requestCard(r) {
         : `<span class="muted">${r.endorsementOptional ? 'No letter attached' : 'No letter attached'}</span>`;
     const actions = r.status === 'Pending'
         ? `<button class="btn ok" data-approve="${r.id}" type="button">Approve</button>
-       <button class="btn bad" data-reject="${r.id}" type="button">Reject</button>` : '';
+       <button class="btn bad" data-reject="${r.id}" data-venue="${r.facilities.length > 0}" data-equip="${r.equipment.length > 0}" type="button">Reject</button>` : '';
     const cancel = (r.status === 'Pending' || r.status === 'Approved')
         ? `<button class="btn bad" data-cancel="${r.eventId}" type="button">Cancel event</button>` : '';
     return `<div class="req">
-    <strong>${esc(r.title)}</strong> ${statusTag(r.status)}${r.role === 'Guest' ? ' <span class="tag guest">Outsider</span>' : ''}<br>
+    <strong>${esc(r.title)}</strong> ${statusTag(r.status)}${r.equipmentRejected ? '<span class="tag partial">Equipment refused</span>' : ''}${r.role === 'Guest' ? ' <span class="tag guest">Outsider</span>' : ''}${privateTag(r)}<br>
     <span class="muted">${fmt(r.startTime)} – ${fmtTime(r.endTime)} · ${esc(r.organization)} · ${esc(r.role)} · for ${esc(r.targetAudience)}${r.audienceDetail ? ' (' + esc(r.audienceDetail) + ')' : ''}</span>
     <p>${esc(r.purpose)}</p>
     <div><b>Requester:</b> ${esc(r.requesterName)} (${esc(r.requesterEmail)})</div>
     <div><b>Facilities:</b> ${r.facilities.length ? r.facilities.map(esc).join(', ') : '—'}</div>
     <div><b>Equipment:</b> ${equipment}</div>
-    ${r.rejectionReason ? `<div><b>Reason:</b> ${esc(r.rejectionReason)}</div>` : ''}
+    ${r.rejectionReason ? `<div><b>${r.equipmentRejected ? 'Why the equipment was refused' : 'Reason'}:</b> ${esc(r.rejectionReason)}</div>` : ''}
     <label for="note-${r.id}">Note for the requester (any status)</label>
     <textarea id="note-${r.id}" maxlength="1000" rows="2" placeholder="e.g. Please bring your own extension cord.">${esc(r.note || '')}</textarea>
     <div class="row">${letter}${actions}${cancel}<button class="btn ghost" data-note="${r.id}" type="button">Save note</button>
@@ -107,6 +109,12 @@ list.addEventListener('click', async e => {
     }
     if (reject) {
         rejectingId = reject;
+        const venue = e.target.dataset.venue === 'true', equip = e.target.dataset.equip === 'true';
+        rejectScope.style.display = venue && equip ? 'flex' : 'none';
+        rejectScope.querySelector('input[value="all"]').checked = true;
+        rejectHint.textContent = !venue
+            ? 'Your office only lends equipment for this event, so rejecting it does not cancel the event.'
+            : !equip ? 'Rejecting the venue rejects the whole event and closes the other offices\' pending parts.' : '';
         reasonInput.value = '';
         rejectMsg.className = 'msg';
         rejectModal.classList.add('open');
@@ -128,9 +136,11 @@ document.getElementById('confirmReject').onclick = async e => {
     const reason = reasonInput.value.trim();
     if (!reason) { showMsg(rejectMsg, 'Please give a reason.', false); return; }
     try {
-        await withBusy(e.target, () => api(`/api/admin/requests/${rejectingId}/reject`, { method: 'POST', body: { reason } }));
+        const equipmentOnly = rejectScope.style.display !== 'none'
+            && rejectScope.querySelector('input[value="equipment"]').checked;
+        const r = await withBusy(e.target, () => api(`/api/admin/requests/${rejectingId}/reject`, { method: 'POST', body: { reason, equipmentOnly } }));
         rejectModal.classList.remove('open');
-        toast('Request rejected.');
+        toast(r.message);
         load();
     } catch (err) { showMsg(rejectMsg, err.message, false); }
 };

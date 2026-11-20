@@ -170,6 +170,7 @@ function buildFormData(selected) {
     const range = Range.read('r');
     fd.append('StartTime', isoLocal(range.start));
     fd.append('EndTime', isoLocal(range.end));
+    fd.append('ShowOnBulletin', document.getElementById('showOnBulletin').checked);
     if (guest) {
         fd.append('GuestEmail', g('guestEmail'));
         if (g('phone')) fd.append('Phone', g('phone'));
@@ -203,6 +204,7 @@ form.addEventListener('submit', async e => {
         const created = await withBusy(document.getElementById('submitBtn'),
             () => api(guest ? '/api/guest/events/request' : '/api/events/request', { method: 'POST', form: buildFormData(selected) }));
         let text = 'Request submitted! Each office you ticked will review its own part.';
+        if (!document.getElementById('showOnBulletin').checked) text += ' It is private: share its registration link once it is approved.';
         if (guest) text += ` SAVE THIS: Event number ${created.event.id} · manage code ${created.manageCode}. You need your email and this code to move or cancel the request.`;
         showMsg(msg, text, true);
         form.reset();
