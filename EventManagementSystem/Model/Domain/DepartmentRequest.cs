@@ -15,6 +15,7 @@ public class DepartmentRequest
     public string? ReviewedBy { get; set; }
     public DateTime? ReviewedAt { get; set; }
     public string? RejectionReason { get; set; }
+    public bool EquipmentRejected { get; set; }   // venue approved, but this office refused the equipment
     public string? AdminNote { get; set; }      
     public DateTime? NoteUpdatedAt { get; set; }
 

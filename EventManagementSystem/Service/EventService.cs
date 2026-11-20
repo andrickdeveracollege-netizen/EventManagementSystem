@@ -47,7 +47,16 @@ public class EventService : IEventService
         (await _events.GetBulletinAsync(DateTime.Now)).Select(e => e.ToSummary()).ToList();
 
     public async Task<List<EventSummaryDto>> GetCalendarAsync(DateTime from, DateTime to, int? facilityId) =>
-        (await _events.GetCalendarAsync(from, to, facilityId)).Select(e => e.ToSummary()).ToList();
+        (await _events.GetCalendarAsync(from, to, facilityId))
+            .Select(e => e.ShowOnBulletin ? e.ToSummary() : e.ToSummary().Masked()).ToList();
+
+    public async Task<EventSummaryDto> GetOpenEventAsync(int id)
+    {
+        var ev = await _events.GetDetailAsync(id);
+        if (ev == null || ev.Status != EventStatus.Approved || !ev.RequiresRegistration || ev.EndTime < DateTime.Now)
+            throw new ServiceException("This event is not open for registration.", 404);
+        return ev.ToSummary();
+    }
 
     public async Task<List<FacilityDto>> GetFacilitiesAsync() =>
         (await _facilities.GetAllAsync()).Select(f => f.ToDto()).ToList();
@@ -161,6 +170,7 @@ public class EventService : IEventService
             IsInstitutional = institutional,
             RequiresRegistration = !institutional,
             ManageCode = NewManageCode(),
+            ShowOnBulletin = dto.ShowOnBulletin,
             Status = EventStatus.Pending,
             DepartmentRequests = requests.Select(r => r.Entity).ToList()
         };
@@ -219,6 +229,7 @@ public class EventService : IEventService
             IsInstitutional = true,
             RequiresRegistration = false,
             ManageCode = NewManageCode(),
+            ShowOnBulletin = dto.ShowOnBulletin,
             Status = EventStatus.Approved,
             DepartmentRequests = byDept.Values.ToList()
         };
@@ -267,6 +278,15 @@ public class EventService : IEventService
     public async Task CancelAsync(int id, string email) =>
         await CancelCoreAsync(await LoadOwnedAsync(id, email));
 
+    public async Task SetBulletinAsync(int id, bool show, string email)
+    {
+        var ev = await LoadOwnedAsync(id, email);
+        if (ev.Status is not (EventStatus.Pending or EventStatus.Approved))
+            throw new ServiceException("Only pending or approved events can be shown or hidden.");
+        ev.ShowOnBulletin = show;
+        await _events.SaveAsync();
+    }
+
 
     public async Task<EventDetailDto> GetGuestEventAsync(int id, string email, string code)
     {
@@ -301,19 +321,10 @@ public class EventService : IEventService
     public async Task ApproveAsync(int id, DepartmentType? dept, string adminEmail)
     {
         var dr = await LoadForReviewAsync(id, dept);
-
-        var facilityIds = dr.Facilities.Where(f => f.Facility is { IsOther: false }).Select(f => f.FacilityId).ToList();
-        if (facilityIds.Count > 0)
-        {
-            var taken = await _events.GetConflictsAsync(
-                facilityIds, dr.CampusEvent!.StartTime, dr.CampusEvent.EndTime,
-                approvedOnly: true, excludeEventId: dr.CampusEventId);
-            if (taken.Count > 0)
-                throw new ServiceException(
-                    $"Another approved event already uses: {string.Join(", ", taken.Select(t => t.FacilityName).Distinct())}.", 409);
-        }
+        await EnsureFacilitiesFreeAsync(dr);
 
         dr.Status = EventStatus.Approved;
+        dr.EquipmentRejected = false;
         dr.ReviewedBy = adminEmail;
         dr.ReviewedAt = DateTime.Now;
         dr.RejectionReason = null;
@@ -321,22 +332,50 @@ public class EventService : IEventService
         await _deptRequests.SaveAsync();
     }
 
-    public async Task RejectAsync(int id, DepartmentType? dept, string adminEmail, string reason)
+    public async Task RejectAsync(int id, DepartmentType? dept, string adminEmail, string reason, bool equipmentOnly)
     {
         var dr = await LoadForReviewAsync(id, dept);
+        var hasVenue = dr.Facilities.Count > 0;
+
+        if (equipmentOnly)
+        {
+            if (dr.EquipmentItems.Count == 0)
+                throw new ServiceException("This request has no equipment to refuse. Approve or reject the venue instead.");
+            if (hasVenue)
+            {
+                // The venue is approved; only this office's equipment is refused, so the event can go on.
+                await EnsureFacilitiesFreeAsync(dr);
+                dr.Status = EventStatus.Approved;
+                dr.EquipmentRejected = true;
+                dr.ReviewedBy = adminEmail;
+                dr.ReviewedAt = DateTime.Now;
+                dr.RejectionReason = reason.Trim();
+                RecomputeStatus(dr.CampusEvent!);
+                await _deptRequests.SaveAsync();
+                return;
+            }
+            // An office that only lends equipment: refusing the equipment is refusing its whole part.
+        }
+
         dr.Status = EventStatus.Rejected;
+        dr.EquipmentRejected = false;
         dr.ReviewedBy = adminEmail;
         dr.ReviewedAt = DateTime.Now;
         dr.RejectionReason = reason.Trim();
 
-        foreach (var other in dr.CampusEvent!.DepartmentRequests.Where(o => o.Id != dr.Id && o.Status == EventStatus.Pending))
+        // Losing a venue stops the event, so the other offices' pending parts are closed.
+        // Losing equipment only does not: the other offices keep reviewing.
+        if (hasVenue)
         {
-            other.Status = EventStatus.Rejected;
-            other.ReviewedBy = adminEmail;
-            other.ReviewedAt = DateTime.Now;
-            other.RejectionReason = $"Closed because {FacilityMapper.OfficeName(dr.Department)} rejected the event.";
+            foreach (var other in dr.CampusEvent!.DepartmentRequests.Where(o => o.Id != dr.Id && o.Status == EventStatus.Pending))
+            {
+                other.Status = EventStatus.Rejected;
+                other.ReviewedBy = adminEmail;
+                other.ReviewedAt = DateTime.Now;
+                other.RejectionReason = $"Closed because {FacilityMapper.OfficeName(dr.Department)} rejected the event.";
+            }
         }
-        RecomputeStatus(dr.CampusEvent);
+        RecomputeStatus(dr.CampusEvent!);
         await _deptRequests.SaveAsync();
     }
 
@@ -417,7 +456,7 @@ public class EventService : IEventService
         ev.Id, ev.Title, ev.Organization, ev.Purpose,
         facilityIds.Distinct().ToList(), names.Distinct().ToList(),
         ev.StartTime, ev.EndTime, ev.TargetAudience, ev.AudienceDetail, ev.Capacity, 0,
-        ev.IsInstitutional, ev.RequiresRegistration, ev.Status);
+        ev.IsInstitutional, ev.RequiresRegistration, ev.Status, ev.ShowOnBulletin);
 
     private void RejectSchoolEmail(string email)
     {
@@ -482,9 +521,13 @@ public class EventService : IEventService
 
         if (!ev.IsInstitutional)
         {
-            foreach (var dr in ev.DepartmentRequests.Where(d => d.Status == EventStatus.Approved))
+            foreach (var dr in ev.DepartmentRequests.Where(d =>
+                         d.Status == EventStatus.Approved
+                         || (d.Status == EventStatus.Rejected && d.Facilities.Count == 0)))
             {
                 dr.Status = EventStatus.Pending;
+                dr.EquipmentRejected = false;
+                dr.RejectionReason = null;
                 dr.ReviewedBy = null;
                 dr.ReviewedAt = null;
             }
@@ -502,12 +545,28 @@ public class EventService : IEventService
         await _events.SaveAsync();
     }
 
+    private async Task EnsureFacilitiesFreeAsync(DepartmentRequest dr)
+    {
+        var facilityIds = dr.Facilities.Where(f => f.Facility is { IsOther: false }).Select(f => f.FacilityId).ToList();
+        if (facilityIds.Count == 0) return;
+        var taken = await _events.GetConflictsAsync(
+            facilityIds, dr.CampusEvent!.StartTime, dr.CampusEvent.EndTime,
+            approvedOnly: true, excludeEventId: dr.CampusEventId);
+        if (taken.Count > 0)
+            throw new ServiceException(
+                $"Another approved event already uses: {string.Join(", ", taken.Select(t => t.FacilityName).Distinct())}.", 409);
+    }
+
+    // Only venues decide the event. A refused venue rejects it; refused equipment does not.
+    // Rejected = a venue office rejected, or every office rejected (nothing left to hold the event with).
+    // Pending  = some office has not decided yet. Approved = everything else.
     private static void RecomputeStatus(CampusEvent ev)
     {
         var all = ev.DepartmentRequests;
-        ev.Status = all.Any(d => d.Status == EventStatus.Rejected) ? EventStatus.Rejected
-                  : all.All(d => d.Status == EventStatus.Approved) ? EventStatus.Approved
-                  : EventStatus.Pending;
+        var venueRejected = all.Any(d => d.Status == EventStatus.Rejected && d.Facilities.Count > 0);
+        ev.Status = venueRejected || all.All(d => d.Status == EventStatus.Rejected) ? EventStatus.Rejected
+                  : all.Any(d => d.Status == EventStatus.Pending) ? EventStatus.Pending
+                  : EventStatus.Approved;
     }
 
     private async Task<CampusEvent> LoadOwnedAsync(int id, string email)

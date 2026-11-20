@@ -22,6 +22,11 @@ namespace EventManagementSystem.Controllers
         public async Task<IActionResult> Calendar([FromQuery] DateTime from, [FromQuery] DateTime to, [FromQuery] int? facilityId)
             => Ok(await _events.GetCalendarAsync(from, to, facilityId));
 
+        // Registration details of one approved event, for the link that the organizer of a private event shares.
+        [HttpGet("{id:int}/open")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Open(int id) => Ok(await _events.GetOpenEventAsync(id));
+
         [HttpGet("mine")]
         [Authorize]
         public async Task<IActionResult> Mine() => Ok(await _events.GetMineAsync(User.Email()));
@@ -65,6 +70,14 @@ namespace EventManagementSystem.Controllers
         [Authorize]
         public async Task<IActionResult> Reschedule(int id, RescheduleDto dto)
             => Ok(await _events.RescheduleAsync(id, dto, User.Email()));
+
+        [HttpPut("{id:int}/bulletin")]
+        [Authorize]
+        public async Task<IActionResult> SetBulletin(int id, BulletinVisibilityDto dto)
+        {
+            await _events.SetBulletinAsync(id, dto.Show, User.Email());
+            return Ok(new { message = dto.Show ? "The event is on the bulletin board." : "The event is now private." });
+        }
 
         [HttpDelete("{id:int}")]
         [Authorize]

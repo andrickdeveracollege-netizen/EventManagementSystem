@@ -8,6 +8,7 @@ namespace EventManagementSystem.Service
         Task<List<EventSummaryDto>> GetBulletinAsync();
         Task<List<EventSummaryDto>> GetCalendarAsync(DateTime from, DateTime to, int? facilityId);
         Task<List<FacilityDto>> GetFacilitiesAsync();
+        Task<EventSummaryDto> GetOpenEventAsync(int id);
 
         
         Task<EventCreatedDto> CreateRequestAsync(EventRequestDto dto, Requester who);
@@ -19,6 +20,7 @@ namespace EventManagementSystem.Service
         Task<EventDetailDto> UpdateAsync(int id, EventUpdateDto dto, string requesterEmail);
         Task<EventDetailDto> RescheduleAsync(int id, RescheduleDto dto, string requesterEmail);
         Task CancelAsync(int id, string requesterEmail);
+        Task SetBulletinAsync(int id, bool show, string requesterEmail);
 
    
         Task<EventDetailDto> GetGuestEventAsync(int id, string email, string code);
@@ -29,7 +31,7 @@ namespace EventManagementSystem.Service
         Task<List<EventReportRowDto>> GetReportAsync(DepartmentType dept);
         Task<List<AdminRequestDto>> GetRequestsForAdminAsync(DepartmentType dept, EventStatus status);
         Task ApproveAsync(int departmentRequestId, DepartmentType? dept, string adminEmail);
-        Task RejectAsync(int departmentRequestId, DepartmentType? dept, string adminEmail, string reason);
+        Task RejectAsync(int departmentRequestId, DepartmentType? dept, string adminEmail, string reason, bool equipmentOnly);
        
         Task<RegistrantListDto> GetRegistrantsAsync(int eventId, string email, bool isAdmin, DepartmentType? dept);
         Task<RegistrantListDto> GetGuestRegistrantsAsync(int eventId, string email, string code);

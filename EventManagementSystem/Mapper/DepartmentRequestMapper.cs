@@ -19,7 +19,9 @@ namespace EventManagementSystem.Mapper
                 d.EndorsementOriginalName,
                 d.RejectionReason,
                 d.AdminNote,
-                e.CreatedAt);
+                e.CreatedAt,
+                e.ShowOnBulletin,
+                d.EquipmentRejected);
         }
     }
 }

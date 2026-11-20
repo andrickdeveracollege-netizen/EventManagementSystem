@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Request an Event</title>
     <link rel="icon" type="image/png" href="/images/angelicum-logo.png" />
-    <link rel="stylesheet" href="/css/site.css?v=20261118" />
-    <link rel="stylesheet" href="/css/board.css?v=20261118" />
+    <link rel="stylesheet" href="/css/site.css?v=20261121" />
+    <link rel="stylesheet" href="/css/board.css?v=20261121" />
 </head>
 <body>
     <header class="top"><a class="brand" href="/index.html"><img class="brand-logo" src="/images/angelicum-logo.png" alt="UST Angelicum College logo" />UST Angelicum College · Event Management</a><nav id="nav"></nav></header>
@@ -43,6 +43,12 @@
                 <div data-range="r"></div>
                 <div class="hint" id="weekendHint" style="display:none">Outsiders can only book on Saturdays and Sundays.</div>
 
+                <label>Bulletin board</label>
+                <div class="checks">
+                    <label><input type="checkbox" id="showOnBulletin" checked /> Post this event on the bulletin board</label>
+                </div>
+                <div class="hint">Untick for a private event. It stays off the bulletin board and the Register page, the calendar only shows its venue as "Reserved", and people register through a link that you share once it is approved.</div>
+
                 <h2 style="margin-top:26px">Which offices do you need?</h2>
                 <div class="hint">Tick each office you need. Then choose its facilities, its equipment, and upload that office's own endorsement letter.</div>
                 <div id="deptBox"><div class="spinner">Loading…</div></div>
@@ -52,7 +58,7 @@
             </form>
         </div>
     </main>
-    <script src="/js/api.js?v=20261118"></script>
-    <script src="/js/request.js?v=20261118"></script>
+    <script src="/js/api.js?v=20261121"></script>
+    <script src="/js/request.js?v=20261121"></script>
 </body>
 </html>

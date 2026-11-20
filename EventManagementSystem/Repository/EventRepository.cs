@@ -16,7 +16,7 @@ public class EventRepository : IEventRepository
             .Include(e => e.DepartmentRequests).ThenInclude(d => d.Facilities).ThenInclude(f => f.Facility);
 
     public Task<List<CampusEvent>> GetBulletinAsync(DateTime now) =>
-        Full().Where(e => e.Status == EventStatus.Approved && e.EndTime >= now)
+        Full().Where(e => e.Status == EventStatus.Approved && e.ShowOnBulletin && e.EndTime >= now)
               .OrderBy(e => e.StartTime).ToListAsync();
 
     public Task<List<CampusEvent>> GetCalendarAsync(DateTime from, DateTime to, int? facilityId)

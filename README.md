@@ -16,7 +16,8 @@ Course: Integrative Programming and Technologies (IPT) · UST Angelicum College
 - Landing page: bulletin board (cork board) with approved upcoming events, and a facility calendar for visitors
 - Sign in with an Angelicum account (`@ustangelicum.edu.ph`), or continue as a visitor (outsider) with just an email
 - **Request an Event**: tick the offices you need (Auxiliary, ITMC, College, TVET, Library); per office choose facilities and equipment, and optionally attach that office's endorsement letter
-- Each office approves or rejects **only its own part** and can leave a note for the requester at any time; the event is Approved when every office approved, Rejected when any rejects
+- Each office approves or rejects **only its own part** and can leave a note for the requester at any time. An office can also **approve the venue but refuse only its equipment**. Only venues decide the event: it is Rejected when an office rejects a venue (or every office rejects), Approved when no office is still pending; refused equipment never rejects the event
+- **Private events:** the requester can untick "Post this event on the bulletin board" (or switch it later in My Events). A private event is left off the bulletin board and the Register page, the calendar shows its venue only as "Reserved", and people register through a link the requester copies from My Events (guests: from the Visitors page)
 - **Register for an Event**: must match the event's target audience; registrations can never exceed the event capacity
 - The requester sees **who registered** and can **export the list to Excel (.xlsx)**
 - Double booking of a facility is refused (409); school events have priority over outsiders
@@ -34,7 +35,7 @@ Course: Integrative Programming and Technologies (IPT) · UST Angelicum College
 Rules: school requests have priority over outsiders; outsiders may book **weekends only**; only facilities big enough for the attendee count are offered; registration cannot exceed capacity; institutional events need no registration; requesters can edit, move or cancel; reset password = `Ustangelicum72`.
 
 ## Status workflow (enforced on the server)
-`Pending → Approved | Rejected`, and `Pending/Approved → Cancelled` (by the requester). Reviewed requests cannot be reviewed again; cancelled events cannot be approved.
+`Pending → Approved | Rejected`, and `Pending/Approved → Cancelled` (by the requester). Reviewed requests cannot be reviewed again; cancelled events cannot be approved. An office part can end as "Approved, equipment refused"; moving an event sends every office part, including refused equipment, back to Pending.
 
 ## Prerequisites
 .NET 8 SDK, SQL Server / SQL Express / LocalDB, and `dotnet-ef` (`dotnet tool install --global dotnet-ef`)
@@ -59,6 +60,7 @@ In Visual Studio: right-click the project, **Manage User Secrets**, paste the sa
 - Front end: https://localhost:7255/ (or http://localhost:5297/)
 - Swagger UI: https://localhost:7255/swagger — click **Authorize** and paste the token returned by `/api/auth/login`
 - The app creates and seeds the database on start. If the project has no `Migrations` folder yet it builds the schema from the model; with migrations it applies them.
+- **Database from before Nov 21, 2026?** Two columns were added (`Events.ShowOnBulletin`, `DepartmentRequests.EquipmentRejected`). Without migrations the app does not change an existing schema, so drop the old database once (`dotnet ef database drop`, or delete `EventManagementDB` in SSMS) and run the app again; it rebuilds and reseeds it. If you already use migrations, run `dotnet ef migrations add BulletinAndEquipmentRefusal` and `dotnet ef database update` instead.
 
 ## How the requirements are met
 | Requirement | Where |
@@ -93,9 +95,11 @@ Seed data: facilities (capacities are placeholders, edit in AppDBContext), equip
 | POST | /api/auth/register, /api/auth/login | anyone |
 | GET | /api/events/bulletin, /api/events/calendar, /api/facilities | anyone |
 | GET/POST/PUT/DELETE | /api/events/mine, /api/events/{id}, /api/events/request, /api/events/{id} | signed-in user (own events) |
+| PUT | /api/events/{id}/bulletin `{ "show": true/false }` | requester – make an open event private or public |
+| GET | /api/events/{id}/open | anyone – one approved event that takes registrations (used by the private-event link) |
 | GET/POST | /api/registrations/mine, /api/registrations, /api/registrations/{id}/cancel | signed-in user |
 | GET | /api/admin/requests?status=, /api/admin/requests/{id}/endorsement | Admin (own office) |
-| POST | /api/admin/requests/{id}/approve, /reject | Admin (own office) |
+| POST | /api/admin/requests/{id}/approve, /reject (`{ "reason": "...", "equipmentOnly": true }` approves the venue and refuses only the equipment) | Admin (own office) |
 | GET | /api/admin/reports/events | Admin – registrations vs capacity per event |
 | DELETE | /api/admin/events/{id} | Admin – cancel an event |
 | GET | /api/events/{id}/registrations (and /export for .xlsx) | Requester or office admin – who registered |

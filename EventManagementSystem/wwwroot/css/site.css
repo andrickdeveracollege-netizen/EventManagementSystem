@@ -855,3 +855,19 @@ img {
         top: 0;
         background: #eef2fb;
     }
+
+.tag.private {
+    background: #eceff3;
+    color: #3f4754;
+}
+
+.tag.partial {
+    background: #fff3cd;
+    color: #8a6d00;
+}
+
+.cal .ev.private {
+    background: #eceff3;
+    border-color: #8a94a6;
+    color: #3f4754;
+}

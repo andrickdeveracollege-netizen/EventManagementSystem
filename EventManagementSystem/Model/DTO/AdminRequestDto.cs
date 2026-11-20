@@ -23,6 +23,8 @@ namespace EventManagementSystem.Model.DTO
         string? EndorsementFileName,
         string? RejectionReason,
         string? Note,
-        DateTime CreatedAt);
+        DateTime CreatedAt,
+        bool ShowOnBulletin,
+        bool EquipmentRejected);
 
 }

@@ -40,7 +40,7 @@
             const cls = ['day', d.getMonth() !== m ? 'other' : '', d.toDateString() === todayStr ? 'today' : ''].join(' ');
             html += `<div class="${cls}" data-date="${isoLocal(d)}">
         <div class="n">${d.getDate()}</div>
-        ${list.slice(0, 2).map(e => `<div class="ev ${e.status === 'Pending' ? 'pending' : ''}" title="${esc(e.title)}">${esc(e.title)}</div>`).join('')}
+        ${list.slice(0, 2).map(e => `<div class="ev ${e.status === 'Pending' ? 'pending' : ''}${e.showOnBulletin ? '' : ' private'}" title="${esc(e.title)}">${esc(e.title)}</div>`).join('')}
         ${list.length > 2 ? `<div class="more">+${list.length - 2}</div>` : ''}
       </div>`;
         }
